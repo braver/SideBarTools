@@ -4,7 +4,7 @@
 		"command": "reveal_in_side_bar"
 	},
 	{
-		"caption": "File: Copy Name",
+		"caption": "File: Copy Filename",
 		"command": "side_bar_copy_name"
 	},
 	{

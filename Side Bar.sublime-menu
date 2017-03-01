@@ -1,6 +1,6 @@
 [
 	{
-		"caption": "Copy Name",
+		"caption": "Copy Filename",
 		"id": "side-bar-clip-copy-name",
 		"command": "side_bar_copy_name",
 		"args": {
