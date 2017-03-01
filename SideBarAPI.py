@@ -7,16 +7,6 @@ import shutil
 class Object():
 	pass
 
-def expandVars(path):
-	for k, v in list(os.environ.items()):
-		path = path.replace('%'+k+'%', v).replace('%'+k.lower()+'%', v)
-	return path
-
-def escapeCMDWindows(string):
-	return string.replace('^', '^^')
-
-BINARY = re.compile('\.(psd|ai|cdr|ico|cache|sublime-package|eot|svgz|ttf|woff|zip|tar|gz|rar|bz2|jar|xpi|mov|mpeg|avi|mpg|flv|wmv|mp3|wav|aif|aiff|snd|wma|asf|asx|pcm|pdf|doc|docx|xls|xlsx|ppt|pptx|rtf|sqlite|sqlitedb|fla|swf|exe)$', re.I)
-
 class SideBarSelection:
 
 	def __init__(self, paths = []):
@@ -287,51 +277,6 @@ class SideBarItem:
 				return directory
 		return False
 
-	def url(self, type):
-
-		filenames = []
-
-		# scans a la htaccess
-		item = SideBarItem(self.path(), self.isDirectory())
-		while not os.path.exists(item.join('.sublime/SideBarEnhancements.json')):
-			if item.dirname() == item.path():
-				break;
-			item.path(item.dirname())
-		item  = SideBarItem(item.join('.sublime/SideBarEnhancements.json'), False);
-		if item.exists():
-			filenames.append(item.path())
-
-		filenames.append(os.path.dirname(sublime.packages_path())+'/Settings/SideBarEnhancements.json')
-
-		import collections
-		for filename in filenames:
-			if os.path.lexists(filename):
-				import json
-				data = open(filename, 'r').read()
-				data = data.replace('\t', ' ').replace('\\', '/').replace('\\', '/').replace('//', '/').replace('//', '/').replace('http:/', 'http://').replace('https:/', 'https://')
-				data = json.loads(data, strict=False, object_pairs_hook=collections.OrderedDict)
-				for key in list(data.keys()):
-					#	print('-------------------------------------------------------')
-					#	print(key);
-					if filename == filenames[len(filenames)-1]:
-						base = expandVars(key)
-					else:
-						base = os.path.normpath(expandVars(os.path.dirname(os.path.dirname(filename))+'/'+key))
-					base = base.replace('\\', '/').replace('\\', '/').replace('//', '/').replace('//', '/')
-					#	print(base)
-					current = self.path().replace('\\', '/').replace('\\', '/').replace('//', '/').replace('//', '/')
-					#	print(current)
-					url_path = re.sub(re.compile("^"+re.escape(base), re.IGNORECASE), '', current);
-					#	print(url_path)
-					if url_path != current:
-						url = data[key][type]
-						if url:
-							if url[-1:] != '/':
-								url = url+'/'
-						import urllib.request, urllib.parse, urllib.error
-						return url+(re.sub("^/", '', urllib.parse.quote(url_path)));
-		return False
-
 	def isUnderCurrentProject(self):
 		path = self.path()
 		path2 = self.path()
@@ -422,84 +367,11 @@ class SideBarItem:
 	def namePretty(self):
 		return self.name().replace(self.extension(), '').replace('-', ' ').replace('_', ' ').strip();
 
-	def open(self, use_powershell = True):
-		if self.isDirectory():
-			import subprocess
-			if sublime.platform() == 'osx':
-				subprocess.Popen(['/Applications/Utilities/Terminal.app/Contents/MacOS/Terminal', '.'], cwd=self.forCwdSystemPath())
-			elif sublime.platform() == 'windows':
-				if use_powershell:
-					try:
-						subprocess.Popen(['start', 'powershell'], cwd=self.forCwdSystemPath(), shell=True)
-					except:
-						subprocess.Popen(['start', 'cmd', '.'], cwd=self.forCwdSystemPath(), shell=True)
-				else:
-					subprocess.Popen(['start', 'cmd', '.'], cwd=self.forCwdSystemPath(), shell=True)
-			elif sublime.platform() == 'linux':
-				subprocess.Popen(['gnome-terminal', '.'], cwd=self.forCwdSystemPath())
-		else:
-			if sublime.platform() == 'osx':
-				import subprocess
-				subprocess.Popen(['open', self.name()], cwd=self.dirname())
-			elif sublime.platform() == 'windows':
-				import subprocess
-				subprocess.Popen(['start',  '', escapeCMDWindows(self.path())], cwd=self.dirname(), shell=True)
-			else:
-				from . import desktop
-				desktop.open(self.path())
-				print('using desktop')
-
-	def edit(self):
-		if BINARY.search(self.path()):
-			return None
-		else:
-			view = sublime.active_window().open_file(self.path())
-			view.settings().set('open_with_edit', True);
-			return view
-
 	def isDirectory(self):
 		return self._is_directory
 
 	def isFile(self):
 		return self.isDirectory() == False
-
-	def contentUTF8(self):
-		return open(self.path(), 'r', newline='', encoding='utf-8').read()
-
-	def contentBinary(self):
-		return open(self.path(), "rb").read()
-
-	def contentBase64(self):
-		import base64
-		base64text = base64.b64encode(self.contentBinary()).decode('utf-8')
-		return 'data:'+self.mime()+';charset=utf-8;base64,'+(base64text.replace('\n', ''))
-
-	def reveal(self):
-		if sublime.platform() == 'windows':
-			import subprocess
-			if self.isDirectory():
-				subprocess.Popen(["explorer", escapeCMDWindows(self.path())])
-			else:
-				subprocess.Popen(["explorer", '/select,', escapeCMDWindows(self.path())])
-		else:
-			sublime.active_window().run_command("open_dir", {"dir": self.dirname(), "file": self.name()} )
-
-	def write(self, content):
-		with open(self.path(), 'w+', encoding='utf8', newline='') as f:
-			f.write(str(content))
-
-		if 3000 <= int(sublime.version()) < 3088:
-			# Fixes as best as possible a new file permissions issue
-			# See https://github.com/titoBouzout/SideBarEnhancements/issues/203
-			# See https://github.com/SublimeTextIssues/Core/issues/239
-			oldmask = os.umask(0o000)
-			if oldmask == 0:
-				os.chmod(self.path(), 0o644)
-			os.umask(oldmask)
-
-	def mime(self):
-		import mimetypes
-		return mimetypes.guess_type(self.path())[0] or 'application/octet-stream'
 
 	def extension(self):
 		try:
