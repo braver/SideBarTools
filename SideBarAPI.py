@@ -376,13 +376,8 @@ class SideBarItem:
 		return os.path.isdir(self.path()) or os.path.isfile(self.path())
 
 	def overwrite(self):
-		overwrite = sublime.ok_cancel_dialog("Destination exists", "Delete, and overwrite")
-		if overwrite:
-			from SideBarEnhancements.send2trash import send2trash
-			send2trash(self.path())
-			return True
-		else:
-			return False
+		overwrite = sublime.message_dialog("Destination exists")
+		return False
 
 	def _makedirs(self, path):
 		if 3000 <= int(sublime.version()) < 3088:
