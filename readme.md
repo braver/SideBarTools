@@ -1,12 +1,14 @@
 # Sidebar Tools
 
+<img src="https://raw.githubusercontent.com/braver/SideBarTools/master/screenshot.png" width="359">
+
 A small set of useful tools to add to your sidebar context menu and command palette:
 
 - [x] copy filename
 - [x] copy full file path
 - [x] copy relative file path
 - [x] duplicate
-- [x] show in sidebar?
+- [x] reveal in sidebar
 
 This package offers a tiny optimised subset of commands from the original [SidebarEnhancements](https://packagecontrol.io/packages/SideBarEnhancements), striking a balance somwhere between the default set and the full haul.
 
@@ -16,5 +18,5 @@ This package offers a tiny optimised subset of commands from the original [Sideb
 
 ---------
 
-SidebarEnhancements &copy; 014 Tito Bouzout tito.bouzout@gmail.com  
+SidebarEnhancements © 2014 [Tito Bouzout](mailto:tito.bouzout@gmail.com)  
 License: [GNU GPL](http://www.gnu.org/licenses/gpl.html)
