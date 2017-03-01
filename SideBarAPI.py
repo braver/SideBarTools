@@ -360,13 +360,6 @@ class SideBarItem:
 		branch, leaf = os.path.split(self.path())
 		return leaf;
 
-	def nameEncoded(self):
-		import urllib.request, urllib.parse, urllib.error
-		return urllib.parse.quote(self.name());
-
-	def namePretty(self):
-		return self.name().replace(self.extension(), '').replace('-', ' ').replace('_', ' ').strip();
-
 	def isDirectory(self):
 		return self._is_directory
 
@@ -390,14 +383,6 @@ class SideBarItem:
 			return True
 		else:
 			return False
-
-	def create(self):
-		if self.isDirectory():
-			self.dirnameCreate()
-			self._makedirs(self.path())
-		else:
-			self.dirnameCreate()
-			self.write('')
 
 	def _makedirs(self, path):
 		if 3000 <= int(sublime.version()) < 3088:
@@ -449,97 +434,3 @@ class SideBarItem:
 				__from = os.path.join(_from, content)
 				__to = os.path.join(_to, content)
 				self.copyRecursive(__from, __to)
-
-	def move(self, location, replace = False):
-		location = SideBarItem(location, os.path.isdir(location));
-		if location.exists() and replace == False:
-			if self.path().lower() == location.path().lower():
-				pass
-			else:
-				return False
-		elif location.exists() and location.isFile():
-			os.remove(location.path())
-
-		if self.path().lower() == location.path().lower():
-			location.dirnameCreate();
-			os.rename(self.path(), location.path()+'.sublime-temp')
-			os.rename(location.path()+'.sublime-temp', location.path())
-			self._moveMoveViews(self.path(), location.path())
-		else:
-			location.dirnameCreate();
-			if location.exists():
-				self.moveRecursive(self.path(), location.path())
-			else:
-				os.rename(self.path(), location.path())
-			self._moveMoveViews(self.path(), location.path())
-		return True
-
-	def moveRecursive(self, _from, _to):
-		if os.path.isfile(_from) or os.path.islink(_from):
-			try:
-				self._makedirs(os.path.dirname(_to));
-			except:
-				pass
-			if os.path.exists(_to):
-				os.remove(_to)
-			os.rename(_from, _to)
-		else:
-			try:
-				self._makedirs(_to);
-			except:
-				pass
-			for content in os.listdir(_from):
-				__from = os.path.join(_from, content)
-				__to = os.path.join(_to, content)
-				self.moveRecursive(__from, __to)
-			os.rmdir(_from)
-
-	def _moveMoveViews(self, old, location):
-		for window in sublime.windows():
-			active_view = window.active_view()
-			views = []
-			for view in window.views():
-				if view.file_name():
-					views.append(view)
-			views.reverse();
-			for view in views:
-				if old == view.file_name():
-					active_view = self._moveMoveView(window, view, location, active_view)
-				elif view.file_name().find(old+'\\') == 0:
-					active_view = self._moveMoveView(window, view, view.file_name().replace(old+'\\', location+'\\', 1), active_view)
-				elif view.file_name().find(old+'/') == 0:
-					active_view = self._moveMoveView(window, view, view.file_name().replace(old+'/', location+'/', 1), active_view)
-
-	def _moveMoveView(self, window, view, location, active_view):
-		view.retarget(location)
-
-	def closeViews(self):
-		path = self.path()
-		closed_items = []
-		for window in sublime.windows():
-			active_view = window.active_view()
-			views = []
-			for view in window.views():
-				if view.file_name():
-					views.append(view)
-			views.reverse();
-			for view in views:
-				if path == view.file_name() or view.file_name().find(path+'\\') == 0 or view.file_name().find(path+'/') == 0:
-					if view.window():
-						closed_items.append([view.file_name(), view.window(), view.window().get_view_index(view)])
-					if len(window.views()) == 1:
-						window.new_file()
-					window.focus_view(view)
-					window.run_command('revert')
-					window.run_command('close')
-
-			# try to repaint
-			try:
-				window.focus_view(active_view)
-				window.focus_view(window.active_view())
-			except:
-				try:
-					window.focus_view(window.active_view())
-				except:
-					pass
-		return closed_items
