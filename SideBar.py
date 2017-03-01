@@ -5,9 +5,6 @@ import os, shutil
 import threading, time
 import re
 
-from .edit.Edit import Edit as Edit
-from .hurry.filesize import size as hurry_size
-
 try:
 	from urllib import unquote as urlunquote
 except ImportError:
@@ -1945,47 +1942,6 @@ class SideBarOpenWithFinderCommand(sublime_plugin.WindowCommand):
 	def is_visible(self, paths =[]):
 		return sublime.platform() == 'osx'
 
-class SideBarStatusBarFileSize(sublime_plugin.EventListener):
-
-	def on_activated(self, v):
-		if v.file_name() and s.get('statusbar_file_size', False):
-			try:
-				self.show(v, hurry_size(os.path.getsize(v.file_name())))
-			except:
-				pass
-
-	def on_post_save(self, v):
-		if v.file_name() and s.get('statusbar_file_size', False):
-			try:
-				self.show(v, hurry_size(os.path.getsize(v.file_name())))
-			except:
-				pass
-
-	def show(self, v, size):
-		v.set_status('statusbar_file_size', size);
-
-class SideBarStatusBarModifiedTime(sublime_plugin.EventListener):
-
-	def on_activated(self, v):
-		if v.file_name() and s.get('statusbar_modified_time', False):
-			try:
-				self.show(v, os.path.getmtime(v.file_name()))
-			except:
-				pass
-
-	def on_post_save(self, v):
-		if v.file_name() and s.get('statusbar_modified_time', False):
-			try:
-				self.show(v, os.path.getmtime(v.file_name()))
-			except:
-				pass
-
-	def show(self, v, mtime):
-		modified_time = time.strftime(s.get('statusbar_modified_time_format', '%A %b %d %H:%M:%S %Y'), time.localtime(mtime))
-		if s.get('statusbar_modified_time_locale', '') != '':
-			modified_time = modified_time.decode(s.get('statusbar_modified_time_locale', ''))
-		v.set_status('statusbar_modified_time', modified_time);
-
 class SideBarDefaultNewFolder(sublime_plugin.EventListener):
 	def on_new(self, view):
 		paths = SideBarProject().getDirectories()
@@ -2012,15 +1968,6 @@ class SideBarAutoCloseEmptyGroupsCommand(sublime_plugin.EventListener):
 			if len(to_close) > 0:
 				window.focus_group(0)
 				window.run_command('close_file')
-
-class SideBarDonateCommand(sublime_plugin.WindowCommand):
-	def run(self, paths = []):
-		sublime.message_dialog('Sidebar Enhancements: Thanks for your support ^.^')
-		browser = s.get('default_browser', '')
-		SideBarOpenInBrowserThread('','','').try_open("https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DD4SL2AHYJGBW", browser)
-
-	def is_visible(self, paths =[]):
-		return not (s.get('i_donated_to_sidebar_enhancements_developer', False) == 'https://www.paypal.com/cgi-bin/webscr?cmd=_s-xclick&hosted_button_id=DD4SL2AHYJGBW')
 
 class zzzzzSideBarCommand(sublime_plugin.WindowCommand):
 	def run(self, paths = []):
