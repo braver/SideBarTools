@@ -361,17 +361,16 @@ class SideBarItem:
 		return leaf;
 
 	def open(self, use_powershell = True):
-		if self.isFile():
-			if sublime.platform() == 'osx':
-				import subprocess
-				subprocess.Popen(['open', self.name()], cwd=self.dirname())
-			elif sublime.platform() == 'windows':
-				import subprocess
-				subprocess.Popen(['start',  '', escapeCMDWindows(self.path())], cwd=self.dirname(), shell=True)
-			else:
-				from . import desktop
-				desktop.open(self.path())
-				print('using desktop')
+		if sublime.platform() == 'osx':
+			import subprocess
+			subprocess.Popen(['open', self.name()], cwd=self.dirname())
+		elif sublime.platform() == 'windows':
+			import subprocess
+			subprocess.Popen(['start',  '', escapeCMDWindows(self.path())], cwd=self.dirname(), shell=True)
+		else:
+			from . import desktop
+			desktop.open(self.path())
+			print('using desktop')
 
 	def isDirectory(self):
 		return self._is_directory
