@@ -360,7 +360,7 @@ class SideBarItem:
 		branch, leaf = os.path.split(self.path())
 		return leaf;
 
-	def open(self, use_powershell = True):
+	def open(self):
 		if sublime.platform() == 'osx':
 			import subprocess
 			subprocess.Popen(['open', self.name()], cwd=self.dirname())

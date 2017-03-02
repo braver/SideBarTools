@@ -167,4 +167,4 @@ class SideBarDuplicateThread(threading.Thread):
 class SideBarOpenCommand(sublime_plugin.WindowCommand):
 	def run(self, paths = []):
 		for item in SideBarSelection(paths).getSelectedItems():
-			item.open(s.get('use_powershell', True))
+			item.open()
