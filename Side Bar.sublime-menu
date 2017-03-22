@@ -32,7 +32,7 @@
 		}
 	},
 	{
-		"caption": "Open With Default…",
+		"caption": "Open With Default",
 		"id": "side-bar-open",
 		"command": "side_bar_open",
 		"args": {
