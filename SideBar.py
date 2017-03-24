@@ -36,20 +36,16 @@ class SideBarCopyNameCommand(sublime_plugin.WindowCommand):
 		sublime.set_clipboard(name)
 		sublime.status_message('copied "{}" to clipboard'.format(name))
 
-class SideBarCopyPathCommand(sublime_plugin.WindowCommand):
+class SideBarCopyAbsolutePathCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		items = []
-		for item in SideBarSelection().getSelectedItems():
-			items.append(item.path())
+		path = self.window.active_view().file_name()
+		sublime.set_clipboard(path)
+		sublime.status_message('copied "{}" to clipboard'.format(path))
 
-		if len(items) > 0:
-			sublime.set_clipboard("\n".join(items));
-			if len(items) > 1 :
-				sublime.status_message("Items copied")
-			else :
-				sublime.status_message("Item copied")
-
-
+class SideBarCopyRelativePathCommand(sublime_plugin.WindowCommand):
+	def run(self):
+		path = self.window.active_view().file_name()
+		self.window.project_data()
 
 class SideBarCopyDirPathCommand(sublime_plugin.WindowCommand):
 	def run(self):

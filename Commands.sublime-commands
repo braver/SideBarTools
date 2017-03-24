@@ -8,12 +8,12 @@
 		"command": "side_bar_copy_name"
 	},
 	{
-		"caption": "File: Copy Path",
-		"command": "side_bar_copy_path_relative_from_project"
+		"caption": "File: Copy Relative Path",
+		"command": "side_bar_copy_relative_path"
 	},
 	{
 		"caption": "File: Copy Absolute Path",
-		"command": "side_bar_copy_dir_path"
+		"command": "side_bar_copy_absolute_path"
 	},
 	{
 		"caption": "File: Duplicate",
