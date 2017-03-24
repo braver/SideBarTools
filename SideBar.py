@@ -32,9 +32,9 @@ Cache.cached = False
 
 class SideBarCopyNameCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		filename = self.window.active_view().file_name()
-		sublime.set_clipboard(filename)
-		sublime.status_message('copied "{}" to clipboard'.format(filename))
+		name = os.path.split(self.window.active_view().file_name())[1]
+		sublime.set_clipboard(name)
+		sublime.status_message('copied "{}" to clipboard'.format(name))
 
 class SideBarCopyPathCommand(sublime_plugin.WindowCommand):
 	def run(self):
