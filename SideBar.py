@@ -63,21 +63,8 @@ class SideBarCopyRelativePathCommand(sublime_plugin.WindowCommand):
 
 class SideBarCopyDirPathCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		items = []
-		for item in SideBarSelection().getSelectedDirectoriesOrDirnames():
-			items.append(item.path())
-
-		if len(items) > 0:
-			sublime.set_clipboard("\n".join(items));
-			if len(items) > 1 :
-				sublime.status_message("Items copied")
-			else :
-				sublime.status_message("Item copied")
-
-
-
-	def is_visible(self):
-		return not s.get('disabled_menuitem_copy_dir_path', False)
+		path = self.window.active_view().file_name()
+		copy_to_clipboard_and_inform(os.path.dirname(path))
 
 class SideBarDuplicateCommand(sublime_plugin.WindowCommand):
 	def run(self, new = False):

@@ -20,6 +20,11 @@
 		"command": "side_bar_copy_absolute_path"
 	},
 	{
+		"caption": "Copy Directory Path",
+		"id": "SideBarTools",
+		"command": "side_bar_copy_dir_path"
+	},
+	{
 		"caption": "Duplicate",
 		"id": "SideBarTools",
 		"command": "side_bar_duplicate"
