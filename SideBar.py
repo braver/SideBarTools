@@ -30,22 +30,36 @@ class Cache():
 Cache = Cache()
 Cache.cached = False
 
+def copy_to_clipboard_and_inform(data):
+	sublime.set_clipboard(data)
+	sublime.status_message('copied "{}" to clipboard'.format(data))
+
 class SideBarCopyNameCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		name = os.path.split(self.window.active_view().file_name())[1]
-		sublime.set_clipboard(name)
-		sublime.status_message('copied "{}" to clipboard'.format(name))
+		copy_to_clipboard_and_inform(name)
 
 class SideBarCopyAbsolutePathCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		path = self.window.active_view().file_name()
-		sublime.set_clipboard(path)
-		sublime.status_message('copied "{}" to clipboard'.format(path))
+		copy_to_clipboard_and_inform(path)
 
 class SideBarCopyRelativePathCommand(sublime_plugin.WindowCommand):
 	def run(self):
 		path = self.window.active_view().file_name()
-		self.window.project_data()
+		project_file_name = self.window.project_file_name()
+		root_dir = ''
+		if project_file_name:
+			root_dir = os.path.dirname(project_file_name)
+		else:
+			root_dir = self.window.project_data()['folders'][0]['path']
+		# I would like to use os.path.commonpath, but that is only available
+		# since Python 3.5. We are on Python 3.3.
+		common = os.path.commonprefix([root_dir, path])
+		path = path[len(common):]
+		if path.startswith('/') or path.startswith('\\'):
+			path = path[1:]
+		copy_to_clipboard_and_inform(path)
 
 class SideBarCopyDirPathCommand(sublime_plugin.WindowCommand):
 	def run(self):
@@ -64,32 +78,6 @@ class SideBarCopyDirPathCommand(sublime_plugin.WindowCommand):
 
 	def is_visible(self):
 		return not s.get('disabled_menuitem_copy_dir_path', False)
-
-class SideBarCopyPathRelativeFromProjectCommand(sublime_plugin.WindowCommand):
-	def run(self):
-		items = []
-		for item in SideBarSelection().getSelectedItems():
-			items.append(item.pathRelativeFromProject())
-
-		if len(items) > 0:
-			sublime.set_clipboard("\n".join(items));
-			if len(items) > 1 :
-				sublime.status_message("Items copied")
-			else :
-				sublime.status_message("Item copied")
-
-class SideBarCopyPathAbsoluteFromProjectCommand(sublime_plugin.WindowCommand):
-	def run(self):
-		items = []
-		for item in SideBarSelection().getSelectedItems():
-			items.append(item.pathAbsoluteFromProject())
-
-		if len(items) > 0:
-			sublime.set_clipboard("\n".join(items));
-			if len(items) > 1 :
-				sublime.status_message("Items copied")
-			else :
-				sublime.status_message("Item copied")
 
 class SideBarDuplicateCommand(sublime_plugin.WindowCommand):
 	def run(self, new = False):
