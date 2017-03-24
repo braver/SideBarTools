@@ -93,6 +93,8 @@ class SideBarDuplicateCommand(sublime_plugin.WindowCommand):
 		self.view.erase_status('ZZZ')
 
 class SideBarOpenCommand(sublime_plugin.WindowCommand):
+
 	def run(self):
-		for item in SideBarSelection().getSelectedItems():
-			item.open()
+		path = self.window.active_view().file_name()
+		print(path)
+		self.window.run_command('open_url', args={'url': path})

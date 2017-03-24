@@ -30,7 +30,7 @@
 		"command": "side_bar_duplicate"
 	},
 	{
-		"caption": "Open With Default",
+		"caption": "Open With Default…",
 		"id": "SideBarTools",
 		"command": "side_bar_open",
 	}
