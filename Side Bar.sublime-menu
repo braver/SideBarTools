@@ -3,40 +3,25 @@
 		"caption": "Copy Filename",
 		"id": "side-bar-clip-copy-name",
 		"command": "side_bar_copy_name",
-		"args": {
-			"paths": []
-		}
 	},
 	{
 		"caption": "Copy Path",
 		"id": "side-bar-clip-copy-path",
 		"command": "side_bar_copy_path_relative_from_project",
-		"args": {
-			"paths": []
-		}
 	},
 	{
 		"caption": "Copy Absolute Path",
 		"id": "side-bar-clip-copy-dir-path",
 		"command": "side_bar_copy_dir_path",
-		"args": {
-			"paths": []
-		}
 	},
 	{
 		"caption": "Duplicate…",
 		"id": "side-bar-duplicate",
 		"command": "side_bar_duplicate",
-		"args": {
-			"paths": []
-		}
 	},
 	{
 		"caption": "Open With Default",
 		"id": "side-bar-open",
 		"command": "side_bar_open",
-		"args": {
-			"paths": []
-		}
 	}
 ]
