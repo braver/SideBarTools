@@ -32,16 +32,9 @@ Cache.cached = False
 
 class SideBarCopyNameCommand(sublime_plugin.WindowCommand):
 	def run(self):
-		items = []
-		for item in SideBarSelection().getSelectedItems():
-			items.append(item.name())
-
-		if len(items) > 0:
-			sublime.set_clipboard("\n".join(items));
-			if len(items) > 1 :
-				sublime.status_message("Items copied")
-			else :
-				sublime.status_message("Item copied")
+		filename = self.window.active_view().file_name()
+		sublime.set_clipboard(filename)
+		sublime.status_message('copied "{}" to clipboard'.format(filename))
 
 class SideBarCopyPathCommand(sublime_plugin.WindowCommand):
 	def run(self):
