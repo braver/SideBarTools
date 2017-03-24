@@ -10,7 +10,7 @@ Some useful tools to add to your sidebar context menu and command palette:
 - duplicate
 - open in default program
 
-This package offers a tiny optimised subset of commands from the original [SidebarEnhancements](https://packagecontrol.io/packages/SideBarEnhancements), striking a balance somwhere between the bare minimum and the kitchen sink.
+This package offers a tiny optimised subset of commands from the original [SidebarEnhancements](https://packagecontrol.io/packages/SideBarEnhancements), striking a balance somewhere between the bare minimum and the kitchen sink.
 
 - The default context menu isn't replaced, this package just adds some useful new commands.
 - It's tiny, fast and reliable.
