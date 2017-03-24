@@ -25,7 +25,7 @@
 		"command": "side_bar_copy_dir_path"
 	},
 	{
-		"caption": "Duplicate",
+		"caption": "Duplicate…",
 		"id": "SideBarTools",
 		"command": "side_bar_duplicate"
 	},

@@ -1,9 +1,11 @@
 # coding=utf8
-import sublime, sublime_plugin
-
+import sublime
+import sublime_plugin
 import os
 import threading
 import time
+import shutil
+import functools
 
 from .SideBarAPI import SideBarItem, SideBarSelection, SideBarProject
 
@@ -67,47 +69,28 @@ class SideBarCopyDirPathCommand(sublime_plugin.WindowCommand):
 		copy_to_clipboard_and_inform(os.path.dirname(path))
 
 class SideBarDuplicateCommand(sublime_plugin.WindowCommand):
-	def run(self, new = False):
-		import functools
-		Window().run_command('hide_panel');
-		view = Window().show_input_panel("Duplicate As:", new or SideBarSelection().getSelectedItems()[0].path(), functools.partial(self.on_done, SideBarSelection().getSelectedItems()[0].path()), None, None)
-		view.sel().clear()
-		view.sel().add(sublime.Region(view.size()-len(SideBarSelection().getSelectedItems()[0].name()), view.size()-len(SideBarSelection().getSelectedItems()[0].extension())))
-
-	def on_done(self, old, new):
-		key = 'duplicate-'+str(time.time())
-		SideBarDuplicateThread(old, new, key).start()
-
-class SideBarDuplicateThread(threading.Thread):
-	def __init__(self, old, new, key):
-		self.old = old
-		self.new = new
-		self.key = key
-		threading.Thread.__init__(self)
 
 	def run(self):
-		old = self.old
-		new = self.new
-		key = self.key
-		window_set_status(key, 'Duplicating…')
+		self.view = self.window.active_view()
+		self.source = self.view.file_name()
+		base, leaf = os.path.split(self.source)
+		name, ext = os.path.splitext(leaf)
+		initial_text = name + ' (Copy)' + ext
+		self.window.show_input_panel('Duplicate As:', 
+			initial_text, self.on_done, None, None)
 
-		item = SideBarItem(old, os.path.isdir(old))
-		try:
-			if not item.copy(new):
-				window_set_status(key, '')
-				if SideBarItem(new, os.path.isdir(new)).overwrite():
-					self.run()
-				else:
-					SideBarDuplicateCommand(Window()).run([old], new)
-				return
-		except:
-			window_set_status(key, '')
-			sublime.error_message("Unable to copy:\n\n"+old+"\n\nto\n\n"+new)
-			SideBarDuplicateCommand(Window()).run([old], new)
-			return
-		item = SideBarItem(new, os.path.isdir(new))
-		SideBarProject().refresh();
-		window_set_status(key, '')
+	def on_done(self, destination):
+		base, _ = os.path.split(self.source)
+		destination = os.path.join(base, destination)
+		threading.Thread(target=self.copy, 
+			args=(self.source, destination)).start()
+
+	def copy(self, source, destination):
+		print(source, destination)
+		self.view.set_status('ZZZ', 'copying "{}" to "{}"'.format(
+			source, destination))
+		shutil.copy2(source, destination)
+		self.view.erase_status('ZZZ')
 
 class SideBarOpenCommand(sublime_plugin.WindowCommand):
 	def run(self):
