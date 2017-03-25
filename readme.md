@@ -11,6 +11,9 @@ Some useful tools to add to your sidebar context menu and command palette:
 - Copy Directory Path
 - Duplicate
 
+If you're missing the "Open With Default" command, consider fetching the
+[Open in Default Application][5] package.
+
 This package offers a subset of commands from the original 
 [SidebarEnhancements][1], striking a balance somwhere between the bare minimum 
 and the kitchen sink.
@@ -29,3 +32,4 @@ License: [GNU GPL][4]
 [2]: https://github.com/SideBarEnhancements-org/SideBarEnhancements/blob/d1c7fa4bac6a1f31ba177bc41ddd0ca902e43609/Stats.py
 [3]: mailto:tito.bouzout@gmail.com
 [4]: http://www.gnu.org/licenses/gpl.html
+[5]: https://packagecontrol.io/packages/Open%20in%20Default%20Application
