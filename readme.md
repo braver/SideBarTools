@@ -11,7 +11,7 @@ Some useful tools to add to your sidebar context menu and command palette:
 - Copy Directory Path
 - Duplicate
 
-This package offers a tiny optimied subset of commands from the original 
+This package offers a subset of commands from the original 
 [SidebarEnhancements][1], striking a balance somwhere between the bare minimum 
 and the kitchen sink.
 
