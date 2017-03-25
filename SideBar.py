@@ -7,31 +7,6 @@ import time
 import shutil
 import functools
 
-from .SideBarAPI import SideBarItem, SideBarSelection, SideBarProject
-
-global s, Cache
-s = {}
-Cache = {}
-
-def CACHED_SELECTION():
-	if Cache.cached:
-		return Cache.cached
-	else:
-		return SideBarSelection()
-
-def Window(window = None):
-	return window if window else sublime.active_window()
-
-def window_set_status(key, name =''):
-	for window in sublime.windows():
-		for view in window.views():
-			view.set_status('SideBar-'+key, name)
-
-class Cache():
-	pass
-Cache = Cache()
-Cache.cached = False
-
 class SideBarCommand(sublime_plugin.WindowCommand):
 	def copy_to_clipboard_and_inform(self, data):
 		sublime.set_clipboard(data)
