@@ -8,24 +8,40 @@ import shutil
 import functools
 
 class SideBarCommand(sublime_plugin.WindowCommand):
+
 	def copy_to_clipboard_and_inform(self, data):
 		sublime.set_clipboard(data)
 		self.window.status_message('copied "{}" to clipboard'.format(data))
 
+	def get_path(self, paths):
+		try:
+			return paths[0]
+		except IndexError:
+			return self.window.active_view().file_name()
+
 class SideBarCopyNameCommand(SideBarCommand):
+
 	def run(self, paths):
-		path = paths[0]
+		path = self.get_path(paths)
 		name = os.path.split(path)[1]
 		self.copy_to_clipboard_and_inform(name)
 
+	def description(self):
+		return 'Copy Filename'
+
 class SideBarCopyAbsolutePathCommand(SideBarCommand):
+
 	def run(self, paths):
-		path = paths[0]
+		path = self.get_path(paths)
 		self.copy_to_clipboard_and_inform(path)
 
+	def description(self):
+		return 'Copy Absolute Path'
+
 class SideBarCopyRelativePathCommand(SideBarCommand):
+
 	def run(self, paths):
-		path = paths[0]
+		path = self.get_path(paths)
 		project_file_name = self.window.project_file_name()
 		root_dir = ''
 		if project_file_name:
@@ -40,16 +56,23 @@ class SideBarCopyRelativePathCommand(SideBarCommand):
 			path = path[1:]
 		self.copy_to_clipboard_and_inform(path)
 
+	def description(self):
+		return 'Copy Relative Path'
+
 class SideBarCopyDirPathCommand(SideBarCommand):
+
 	def run(self, paths):
-		path = paths[0]
+		path = self.get_path(paths)
 		self.copy_to_clipboard_and_inform(os.path.dirname(path))
+
+	def description(self):
+		return 'Copy Directory Path'
 
 class SideBarDuplicateCommand(SideBarCommand):
 
 	def run(self, paths):
 		self.view = self.window.active_view()
-		self.source = paths[0]
+		self.source = self.get_path(paths)
 		base, leaf = os.path.split(self.source)
 		name, ext = os.path.splitext(leaf)
 		initial_text = name + ' (Copy)' + ext
@@ -74,9 +97,15 @@ class SideBarDuplicateCommand(SideBarCommand):
 		if self.view:
 			self.view.erase_status('ZZZ')
 
+	def description(self):
+		return 'Duplicate File…'
+
 class SideBarOpenCommand(SideBarCommand):
 
 	def run(self, paths):
-		path = paths[0]
+		path = self.get_path(paths)
 		print(path)
 		self.window.run_command('open_url', args={'url': path})
+
+	def description(self):
+		return 'Open With Default…'
