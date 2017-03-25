@@ -32,23 +32,25 @@ class Cache():
 Cache = Cache()
 Cache.cached = False
 
-def copy_to_clipboard_and_inform(data):
-	sublime.set_clipboard(data)
-	sublime.status_message('copied "{}" to clipboard'.format(data))
+class SideBarCommand(sublime_plugin.WindowCommand):
+	def copy_to_clipboard_and_inform(self, data):
+		sublime.set_clipboard(data)
+		self.window.status_message('copied "{}" to clipboard'.format(data))
 
-class SideBarCopyNameCommand(sublime_plugin.WindowCommand):
-	def run(self):
-		name = os.path.split(self.window.active_view().file_name())[1]
-		copy_to_clipboard_and_inform(name)
+class SideBarCopyNameCommand(SideBarCommand):
+	def run(self, paths):
+		path = paths[0]
+		name = os.path.split(path)[1]
+		self.copy_to_clipboard_and_inform(name)
 
-class SideBarCopyAbsolutePathCommand(sublime_plugin.WindowCommand):
-	def run(self):
-		path = self.window.active_view().file_name()
-		copy_to_clipboard_and_inform(path)
+class SideBarCopyAbsolutePathCommand(SideBarCommand):
+	def run(self, paths):
+		path = paths[0]
+		self.copy_to_clipboard_and_inform(path)
 
-class SideBarCopyRelativePathCommand(sublime_plugin.WindowCommand):
-	def run(self):
-		path = self.window.active_view().file_name()
+class SideBarCopyRelativePathCommand(SideBarCommand):
+	def run(self, paths):
+		path = paths[0]
 		project_file_name = self.window.project_file_name()
 		root_dir = ''
 		if project_file_name:
@@ -61,18 +63,18 @@ class SideBarCopyRelativePathCommand(sublime_plugin.WindowCommand):
 		path = path[len(common):]
 		if path.startswith('/') or path.startswith('\\'):
 			path = path[1:]
-		copy_to_clipboard_and_inform(path)
+		self.copy_to_clipboard_and_inform(path)
 
-class SideBarCopyDirPathCommand(sublime_plugin.WindowCommand):
-	def run(self):
-		path = self.window.active_view().file_name()
-		copy_to_clipboard_and_inform(os.path.dirname(path))
+class SideBarCopyDirPathCommand(SideBarCommand):
+	def run(self, paths):
+		path = paths[0]
+		self.copy_to_clipboard_and_inform(os.path.dirname(path))
 
-class SideBarDuplicateCommand(sublime_plugin.WindowCommand):
+class SideBarDuplicateCommand(SideBarCommand):
 
-	def run(self):
+	def run(self, paths):
 		self.view = self.window.active_view()
-		self.source = self.view.file_name()
+		self.source = paths[0]
 		base, leaf = os.path.split(self.source)
 		name, ext = os.path.splitext(leaf)
 		initial_text = name + ' (Copy)' + ext
@@ -87,14 +89,19 @@ class SideBarDuplicateCommand(sublime_plugin.WindowCommand):
 
 	def copy(self, source, destination):
 		print(source, destination)
-		self.view.set_status('ZZZ', 'copying "{}" to "{}"'.format(
-			source, destination))
+		if self.view:
+			self.view.set_status('ZZZ', 'copying "{}" to "{}"'.format(
+				source, destination))
+		else:
+			self.window.status_message('copying "{}" to "{}"'.format(
+				source, destination))
 		shutil.copy2(source, destination)
-		self.view.erase_status('ZZZ')
+		if self.view:
+			self.view.erase_status('ZZZ')
 
-class SideBarOpenCommand(sublime_plugin.WindowCommand):
+class SideBarOpenCommand(SideBarCommand):
 
-	def run(self):
-		path = self.window.active_view().file_name()
+	def run(self, paths):
+		path = paths[0]
 		print(path)
 		self.window.run_command('open_url', args={'url': path})
