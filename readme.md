@@ -15,7 +15,7 @@ If you're missing the "Open With Default" command, consider fetching the
 [Open in Default Application][5] package.
 
 This package offers a subset of commands from the original 
-[SidebarEnhancements][1], striking a balance somwhere between the bare minimum 
+[SidebarEnhancements][1], striking a balance somewhere between the bare minimum 
 and the kitchen sink.
 
 - The default context menu isn't replaced, this package just adds some useful 
