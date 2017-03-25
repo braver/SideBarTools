@@ -99,13 +99,3 @@ class SideBarDuplicateCommand(SideBarCommand):
 
 	def description(self):
 		return 'Duplicate File…'
-
-class SideBarOpenCommand(SideBarCommand):
-
-	def run(self, paths):
-		path = self.get_path(paths)
-		print(path)
-		self.window.run_command('open_url', args={'url': path})
-
-	def description(self):
-		return 'Open With Default…'

@@ -31,10 +31,5 @@
 		"caption": "Duplicate…",
 		"command": "side_bar_duplicate",
 		"args": { "paths": [] }
-	},
-	{
-		"caption": "Open With Default…",
-		"command": "side_bar_open",
-		"args": { "paths": [] }
 	}
 ]
