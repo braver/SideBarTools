@@ -1,22 +1,27 @@
 [
 	{
 		"caption": "File: Reveal in Sidebar",
-		"command": "reveal_in_side_bar"
+		"command": "reveal_in_side_bar",
+		"args": { "paths": [] }
 	},
 	{
 		"caption": "File: Copy Filename",
-		"command": "side_bar_copy_name"
+		"command": "side_bar_copy_name",
+		"args": { "paths": [] }
 	},
 	{
-		"caption": "File: Copy Path",
-		"command": "side_bar_copy_path_relative_from_project"
+		"caption": "File: Copy Relative Path",
+		"command": "side_bar_copy_relative_path",
+		"args": { "paths": [] }
 	},
 	{
 		"caption": "File: Copy Absolute Path",
-		"command": "side_bar_copy_dir_path"
+		"command": "side_bar_copy_absolute_path",
+		"args": { "paths": [] }
 	},
 	{
 		"caption": "File: Duplicate",
-		"command": "side_bar_duplicate"
+		"command": "side_bar_duplicate",
+		"args": { "paths": [] }
 	}
 ]

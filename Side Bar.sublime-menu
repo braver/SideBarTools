@@ -1,42 +1,35 @@
 [
 	{
-		"caption": "Copy Filename",
-		"id": "side-bar-clip-copy-name",
-		"command": "side_bar_copy_name",
-		"args": {
-			"paths": []
-		}
+		"id": "SideBarTools", "caption": "-"
 	},
 	{
-		"caption": "Copy Path",
-		"id": "side-bar-clip-copy-path",
-		"command": "side_bar_copy_path_relative_from_project",
-		"args": {
-			"paths": []
-		}
+		"caption": "Reveal in Sidebar",
+		"command": "reveal_in_side_bar",
+		"args": { "paths": [] }
+	},
+	{
+		"caption": "Copy Filename",
+		"command": "side_bar_copy_name",
+		"args": { "paths": [] }
+	},
+	{
+		"caption": "Copy Relative Path",
+		"command": "side_bar_copy_relative_path",
+		"args": { "paths": [] }
 	},
 	{
 		"caption": "Copy Absolute Path",
-		"id": "side-bar-clip-copy-dir-path",
+		"command": "side_bar_copy_absolute_path",
+		"args": { "paths": [] }
+	},
+	{
+		"caption": "Copy Directory Path",
 		"command": "side_bar_copy_dir_path",
-		"args": {
-			"paths": []
-		}
+		"args": { "paths": [] }
 	},
 	{
 		"caption": "Duplicate…",
-		"id": "side-bar-duplicate",
 		"command": "side_bar_duplicate",
-		"args": {
-			"paths": []
-		}
-	},
-	{
-		"caption": "Open With Default",
-		"id": "side-bar-open",
-		"command": "side_bar_open",
-		"args": {
-			"paths": []
-		}
+		"args": { "paths": [] }
 	}
 ]

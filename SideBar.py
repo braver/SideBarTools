@@ -1,170 +1,101 @@
 # coding=utf8
-import sublime, sublime_plugin
-
+import sublime
+import sublime_plugin
 import os
 import threading
 import time
+import shutil
+import functools
 
-from .SideBarAPI import SideBarItem, SideBarSelection, SideBarProject
+class SideBarCommand(sublime_plugin.WindowCommand):
 
-global s, Cache
-s = {}
-Cache = {}
+	def copy_to_clipboard_and_inform(self, data):
+		sublime.set_clipboard(data)
+		self.window.status_message('copied "{}" to clipboard'.format(data))
 
-def CACHED_SELECTION(paths = []):
-	if Cache.cached:
-		return Cache.cached
-	else:
-		return SideBarSelection(paths)
-
-def Window(window = None):
-	return window if window else sublime.active_window()
-
-def window_set_status(key, name =''):
-	for window in sublime.windows():
-		for view in window.views():
-			view.set_status('SideBar-'+key, name)
-
-class Cache():
-	pass
-Cache = Cache()
-Cache.cached = False
-
-class SideBarCopyNameCommand(sublime_plugin.WindowCommand):
-	def run(self, paths = []):
-		items = []
-		for item in SideBarSelection(paths).getSelectedItems():
-			items.append(item.name())
-
-		if len(items) > 0:
-			sublime.set_clipboard("\n".join(items));
-			if len(items) > 1 :
-				sublime.status_message("Items copied")
-			else :
-				sublime.status_message("Item copied")
-
-	def is_enabled(self, paths = []):
-		return CACHED_SELECTION(paths).len() > 0
-
-	def is_visible(self, paths =[]):
-		return not s.get('disabled_menuitem_copy_name', False)
-
-class SideBarCopyPathCommand(sublime_plugin.WindowCommand):
-	def run(self, paths = []):
-		items = []
-		for item in SideBarSelection(paths).getSelectedItems():
-			items.append(item.path())
-
-		if len(items) > 0:
-			sublime.set_clipboard("\n".join(items));
-			if len(items) > 1 :
-				sublime.status_message("Items copied")
-			else :
-				sublime.status_message("Item copied")
-
-	def is_enabled(self, paths = []):
-		return CACHED_SELECTION(paths).len() > 0
-
-class SideBarCopyDirPathCommand(sublime_plugin.WindowCommand):
-	def run(self, paths = []):
-		items = []
-		for item in SideBarSelection(paths).getSelectedDirectoriesOrDirnames():
-			items.append(item.path())
-
-		if len(items) > 0:
-			sublime.set_clipboard("\n".join(items));
-			if len(items) > 1 :
-				sublime.status_message("Items copied")
-			else :
-				sublime.status_message("Item copied")
-
-	def is_enabled(self, paths = []):
-		return CACHED_SELECTION(paths).len() > 0
-
-	def is_visible(self, paths =[]):
-		return not s.get('disabled_menuitem_copy_dir_path', False)
-
-class SideBarCopyPathRelativeFromProjectCommand(sublime_plugin.WindowCommand):
-	def run(self, paths = []):
-		items = []
-		for item in SideBarSelection(paths).getSelectedItems():
-			items.append(item.pathRelativeFromProject())
-
-		if len(items) > 0:
-			sublime.set_clipboard("\n".join(items));
-			if len(items) > 1 :
-				sublime.status_message("Items copied")
-			else :
-				sublime.status_message("Item copied")
-
-	def is_enabled(self, paths = []):
-		return CACHED_SELECTION(paths).len() > 0 and CACHED_SELECTION(paths).hasItemsUnderProject()
-
-class SideBarCopyPathAbsoluteFromProjectCommand(sublime_plugin.WindowCommand):
-	def run(self, paths = []):
-		items = []
-		for item in SideBarSelection(paths).getSelectedItems():
-			items.append(item.pathAbsoluteFromProject())
-
-		if len(items) > 0:
-			sublime.set_clipboard("\n".join(items));
-			if len(items) > 1 :
-				sublime.status_message("Items copied")
-			else :
-				sublime.status_message("Item copied")
-
-	def is_enabled(self, paths = []):
-		return CACHED_SELECTION(paths).len() > 0 and CACHED_SELECTION(paths).hasItemsUnderProject()
-
-class SideBarDuplicateCommand(sublime_plugin.WindowCommand):
-	def run(self, paths = [], new = False):
-		import functools
-		Window().run_command('hide_panel');
-		view = Window().show_input_panel("Duplicate As:", new or SideBarSelection(paths).getSelectedItems()[0].path(), functools.partial(self.on_done, SideBarSelection(paths).getSelectedItems()[0].path()), None, None)
-		view.sel().clear()
-		view.sel().add(sublime.Region(view.size()-len(SideBarSelection(paths).getSelectedItems()[0].name()), view.size()-len(SideBarSelection(paths).getSelectedItems()[0].extension())))
-
-	def on_done(self, old, new):
-		key = 'duplicate-'+str(time.time())
-		SideBarDuplicateThread(old, new, key).start()
-
-	def is_enabled(self, paths = []):
-		return CACHED_SELECTION(paths).len() == 1 and CACHED_SELECTION(paths).hasProjectDirectories() == False
-
-class SideBarDuplicateThread(threading.Thread):
-	def __init__(self, old, new, key):
-		self.old = old
-		self.new = new
-		self.key = key
-		threading.Thread.__init__(self)
-
-	def run(self):
-		old = self.old
-		new = self.new
-		key = self.key
-		window_set_status(key, 'Duplicating…')
-
-		item = SideBarItem(old, os.path.isdir(old))
+	def get_path(self, paths):
 		try:
-			if not item.copy(new):
-				window_set_status(key, '')
-				if SideBarItem(new, os.path.isdir(new)).overwrite():
-					self.run()
-				else:
-					SideBarDuplicateCommand(Window()).run([old], new)
-				return
-		except:
-			window_set_status(key, '')
-			sublime.error_message("Unable to copy:\n\n"+old+"\n\nto\n\n"+new)
-			SideBarDuplicateCommand(Window()).run([old], new)
-			return
-		item = SideBarItem(new, os.path.isdir(new))
-		if item.isFile():
-			item.edit();
-		SideBarProject().refresh();
-		window_set_status(key, '')
+			return paths[0]
+		except IndexError:
+			return self.window.active_view().file_name()
 
-class SideBarOpenCommand(sublime_plugin.WindowCommand):
-	def run(self, paths = []):
-		for item in SideBarSelection(paths).getSelectedItems():
-			item.open()
+class SideBarCopyNameCommand(SideBarCommand):
+
+	def run(self, paths):
+		path = self.get_path(paths)
+		name = os.path.split(path)[1]
+		self.copy_to_clipboard_and_inform(name)
+
+	def description(self):
+		return 'Copy Filename'
+
+class SideBarCopyAbsolutePathCommand(SideBarCommand):
+
+	def run(self, paths):
+		path = self.get_path(paths)
+		self.copy_to_clipboard_and_inform(path)
+
+	def description(self):
+		return 'Copy Absolute Path'
+
+class SideBarCopyRelativePathCommand(SideBarCommand):
+
+	def run(self, paths):
+		path = self.get_path(paths)
+		project_file_name = self.window.project_file_name()
+		root_dir = ''
+		if project_file_name:
+			root_dir = os.path.dirname(project_file_name)
+		else:
+			root_dir = self.window.project_data()['folders'][0]['path']
+		# I would like to use os.path.commonpath, but that is only available
+		# since Python 3.5. We are on Python 3.3.
+		common = os.path.commonprefix([root_dir, path])
+		path = path[len(common):]
+		if path.startswith('/') or path.startswith('\\'):
+			path = path[1:]
+		self.copy_to_clipboard_and_inform(path)
+
+	def description(self):
+		return 'Copy Relative Path'
+
+class SideBarCopyDirPathCommand(SideBarCommand):
+
+	def run(self, paths):
+		path = self.get_path(paths)
+		self.copy_to_clipboard_and_inform(os.path.dirname(path))
+
+	def description(self):
+		return 'Copy Directory Path'
+
+class SideBarDuplicateCommand(SideBarCommand):
+
+	def run(self, paths):
+		self.view = self.window.active_view()
+		self.source = self.get_path(paths)
+		base, leaf = os.path.split(self.source)
+		name, ext = os.path.splitext(leaf)
+		initial_text = name + ' (Copy)' + ext
+		self.window.show_input_panel('Duplicate As:', 
+			initial_text, self.on_done, None, None)
+
+	def on_done(self, destination):
+		base, _ = os.path.split(self.source)
+		destination = os.path.join(base, destination)
+		threading.Thread(target=self.copy, 
+			args=(self.source, destination)).start()
+
+	def copy(self, source, destination):
+		print(source, destination)
+		if self.view:
+			self.view.set_status('ZZZ', 'copying "{}" to "{}"'.format(
+				source, destination))
+		else:
+			self.window.status_message('copying "{}" to "{}"'.format(
+				source, destination))
+		shutil.copy2(source, destination)
+		if self.view:
+			self.view.erase_status('ZZZ')
+
+	def description(self):
+		return 'Duplicate File…'
