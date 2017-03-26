@@ -1,6 +1,6 @@
 # Sidebar Tools
 
-<img src="https://raw.githubusercontent.com/braver/SideBarTools/master/screenshot.png" width="336">
+<img src="https://raw.githubusercontent.com/braver/SideBarTools/master/screenshot.png" width="461">
 
 Some useful tools to add to your sidebar context menu and command palette:
 
@@ -10,7 +10,7 @@ Some useful tools to add to your sidebar context menu and command palette:
 - Copy Absolute Path
 - Duplicate
 
-If you're missing the "Open With Default" command, consider fetching the
+If you're missing the "Open With Default" command, consider installing the
 [Open in Default Application][5] package.
 
 This package offers a subset of commands from the original 
