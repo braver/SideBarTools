@@ -59,15 +59,6 @@ class SideBarCopyRelativePathCommand(SideBarCommand):
 	def description(self):
 		return 'Copy Relative Path'
 
-class SideBarCopyDirPathCommand(SideBarCommand):
-
-	def run(self, paths):
-		path = self.get_path(paths)
-		self.copy_to_clipboard_and_inform(os.path.dirname(path))
-
-	def description(self):
-		return 'Copy Directory Path'
-
 class SideBarDuplicateCommand(SideBarCommand):
 
 	def run(self, paths):
@@ -76,13 +67,13 @@ class SideBarDuplicateCommand(SideBarCommand):
 		base, leaf = os.path.split(self.source)
 		name, ext = os.path.splitext(leaf)
 		initial_text = name + ' (Copy)' + ext
-		self.window.show_input_panel('Duplicate As:', 
+		self.window.show_input_panel('Duplicate As:',
 			initial_text, self.on_done, None, None)
 
 	def on_done(self, destination):
 		base, _ = os.path.split(self.source)
 		destination = os.path.join(base, destination)
-		threading.Thread(target=self.copy, 
+		threading.Thread(target=self.copy,
 			args=(self.source, destination)).start()
 
 	def copy(self, source, destination):

@@ -23,11 +23,6 @@
 		"args": { "paths": [] }
 	},
 	{
-		"caption": "Copy Directory Path",
-		"command": "side_bar_copy_dir_path",
-		"args": { "paths": [] }
-	},
-	{
 		"caption": "Duplicate…",
 		"command": "side_bar_duplicate",
 		"args": { "paths": [] }

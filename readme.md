@@ -8,7 +8,6 @@ Some useful tools to add to your sidebar context menu and command palette:
 - Copy Filename
 - Copy Relative Path
 - Copy Absolute Path
-- Copy Directory Path
 - Duplicate
 
 If you're missing the "Open With Default" command, consider fetching the
