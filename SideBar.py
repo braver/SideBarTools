@@ -84,7 +84,12 @@ class SideBarDuplicateCommand(SideBarCommand):
 		else:
 			self.window.status_message('copying "{}" to "{}"'.format(
 				source, destination))
-		shutil.copy2(source, destination)
+
+		if os.path.isdir(source):
+			shutil.copytree(source, destination)
+		else:
+			shutil.copy2(source, destination)
+
 		if self.view:
 			self.view.erase_status('ZZZ')
 
