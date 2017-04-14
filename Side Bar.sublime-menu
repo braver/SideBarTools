@@ -3,11 +3,6 @@
 		"id": "SideBarTools", "caption": "-"
 	},
 	{
-		"caption": "Reveal in Sidebar",
-		"command": "reveal_in_side_bar",
-		"args": { "paths": [] }
-	},
-	{
 		"caption": "Copy Filename",
 		"command": "side_bar_copy_name",
 		"args": { "paths": [] }
