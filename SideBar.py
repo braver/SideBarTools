@@ -46,8 +46,6 @@ class SideBarCopyRelativePathCommand(SideBarCommand):
 			root_dir = os.path.dirname(project_file_name)
 		else:
 			root_dir = self.window.project_data()['folders'][0]['path']
-		# I would like to use os.path.commonpath, but that is only available
-		# since Python 3.5. We are on Python 3.3.
 		common = os.path.commonprefix([root_dir, path])
 		path = path[len(common):]
 		if path.startswith('/') or path.startswith('\\'):
