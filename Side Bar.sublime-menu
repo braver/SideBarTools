@@ -1,7 +1,10 @@
 [
+    { "caption": "-", "id": "folder_commands" },
     {
-        "id": "SideBarTools", "caption": "-"
+        "caption": "Refresh Folders",
+        "command": "refresh_folder_list"
     },
+    { "caption": "-", "id": "SideBarTools" },
     {
         "caption": "Duplicate…",
         "command": "side_bar_duplicate",
