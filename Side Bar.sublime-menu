@@ -1,30 +1,34 @@
 [
-	{
-		"id": "SideBarTools", "caption": "-"
-	},
-	{
-		"caption": "Reveal in Sidebar",
-		"command": "reveal_in_side_bar",
-		"args": { "paths": [] }
-	},
-	{
-		"caption": "Copy Filename",
-		"command": "side_bar_copy_name",
-		"args": { "paths": [] }
-	},
-	{
-		"caption": "Copy Relative Path",
-		"command": "side_bar_copy_relative_path",
-		"args": { "paths": [] }
-	},
-	{
-		"caption": "Copy Absolute Path",
-		"command": "side_bar_copy_absolute_path",
-		"args": { "paths": [] }
-	},
-	{
-		"caption": "Duplicate…",
-		"command": "side_bar_duplicate",
-		"args": { "paths": [] }
-	}
+    { "caption": "-", "id": "folder_commands" },
+    {
+        "caption": "Refresh Folders",
+        "command": "refresh_folder_list"
+    },
+    { "caption": "-", "id": "SideBarTools" },
+    {
+        "caption": "Duplicate…",
+        "command": "side_bar_duplicate",
+        "args": { "paths": [] }
+    },
+    {
+        "caption": "Reveal in Sidebar",
+        "command": "reveal_in_side_bar",
+        "args": { "paths": [] }
+    },
+    { "caption": "-", "id": "copy_commands" },
+    {
+        "caption": "Copy Filename",
+        "command": "side_bar_copy_name",
+        "args": { "paths": [] }
+    },
+    {
+        "caption": "Copy Relative Path",
+        "command": "side_bar_copy_relative_path",
+        "args": { "paths": [] }
+    },
+    {
+        "caption": "Copy Absolute Path",
+        "command": "side_bar_copy_absolute_path",
+        "args": { "paths": [] }
+    }
 ]
