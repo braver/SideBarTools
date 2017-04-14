@@ -3,10 +3,16 @@
         "id": "SideBarTools", "caption": "-"
     },
     {
+        "caption": "Duplicate…",
+        "command": "side_bar_duplicate",
+        "args": { "paths": [] }
+    },
+    {
         "caption": "Reveal in Sidebar",
         "command": "reveal_in_side_bar",
         "args": { "paths": [] }
     },
+    { "caption": "-", "id": "copy_commands" },
     {
         "caption": "Copy Filename",
         "command": "side_bar_copy_name",
@@ -20,11 +26,6 @@
     {
         "caption": "Copy Absolute Path",
         "command": "side_bar_copy_absolute_path",
-        "args": { "paths": [] }
-    },
-    {
-        "caption": "Duplicate…",
-        "command": "side_bar_duplicate",
         "args": { "paths": [] }
     }
 ]
