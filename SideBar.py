@@ -3,9 +3,7 @@ import sublime
 import sublime_plugin
 import os
 import threading
-import time
 import shutil
-import functools
 
 
 class SideBarCommand(sublime_plugin.WindowCommand):
