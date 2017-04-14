@@ -1,9 +1,11 @@
 # coding=utf8
+import os
+import shutil
+import threading
+
+
 import sublime
 import sublime_plugin
-import os
-import threading
-import shutil
 
 
 class SideBarCommand(sublime_plugin.WindowCommand):
