@@ -15,7 +15,7 @@ If you're missing the "Open With Default" command, consider installing the
 
 if you're looking for "Reveal in Finder/Explorer" for directories, [Open in Default Application][5] does that too.
 
-If you're looking for a command to "Move" a file or folder, note that you can use the existing "Rename" command. I accepts paths relative from the file's current location, as well as absolute paths (e.g. `file.txt` -> `../file.txt`). 
+If you're looking for a command to "Move" a file or folder, note that you can use the existing "Rename" command. It accepts paths relative from the file's current location, as well as absolute paths (e.g. `file.txt` -> `../file.txt`). 
 
 This package offers fewer commands than [SidebarEnhancements][1], striking a balance somewhere between the bare minimum 
 and going overboard. This has benefits:
