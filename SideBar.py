@@ -78,7 +78,7 @@ class SideBarDuplicateCommand(SideBarCommand):
 	def copy(self, source, destination):
 		print(source, destination)
 		if self.view:
-			self.view.set_status('ZZZ', 'copying "{}" to "{}"'.format(
+			self.view.set_status('SideBarTools:Copy', 'copying "{}" to "{}"'.format(
 				source, destination))
 		else:
 			self.window.status_message('copying "{}" to "{}"'.format(
@@ -90,7 +90,73 @@ class SideBarDuplicateCommand(SideBarCommand):
 			shutil.copy2(source, destination)
 
 		if self.view:
-			self.view.erase_status('ZZZ')
+			self.view.erase_status('SideBarTools:Copy')
 
 	def description(self):
 		return 'Duplicate File…'
+
+
+def temporary_status_message(view, message, key='SideBarTools', duration=5000):
+	view.set_status(key, message)
+
+	def erase_status():
+		view.erase_status(key)
+
+	sublime.set_timeout_async(erase_status, duration)
+
+
+class SideBarMoveCommand(SideBarCommand):
+
+	def run(self, paths):
+		self.view = self.window.active_view()
+		self.source = self.get_path(paths)
+
+		input_panel = self.window.show_input_panel(
+			'Move to:', self.source, self.on_done, None, None)
+
+		base, leaf = os.path.split(self.source)
+		name, ext = os.path.splitext(leaf)
+
+		input_panel.sel().clear()
+		input_panel.sel().add(sublime.Region(len(base) + 1, len(self.source) - len(ext)))
+
+	def on_done(self, destination):
+		threading.Thread(target=self.move, args=(self.source, destination)).start()
+
+	def move(self, source, destination):
+		print(source, destination)
+		if self.view:
+			self.view.set_status(
+				'SideBarTools:Move', 'Moving "{}" to "{}"'.format(source, destination))
+		else:
+			self.window.status_message(
+				'Moving "{}" to "{}"'.format(source, destination))
+
+		destination_dir = os.path.dirname(destination)
+		try:
+			os.makedirs(destination_dir)
+		except OSError:
+			print('Destination directory seems to exists...')
+
+		if self.view:
+			self.view.erase_status('SideBarTools:Move')
+
+		try:
+			shutil.move(source, destination)
+		except OSError as error:
+			message = 'Error moving "{src}" to "{dst}": {error}'.format(
+				src=source,
+				dst=destination,
+				error=error,
+			)
+			if self.view:
+				temporary_status_message(
+					self.view,
+					message,
+					key='SideBarTools:Move'
+				)
+			else:
+				print(message)
+
+	def description(self):
+		return 'Move File…'

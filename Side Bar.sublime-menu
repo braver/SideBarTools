@@ -21,5 +21,10 @@
 		"caption": "Duplicate…",
 		"command": "side_bar_duplicate",
 		"args": { "paths": [] }
+	},
+	{
+		"caption": "Move…",
+		"command": "side_bar_move",
+		"args": { "paths": [] }
 	}
 ]
