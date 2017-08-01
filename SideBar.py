@@ -78,7 +78,7 @@ class SideBarDuplicateCommand(SideBarCommand):
 	def copy(self, source, destination):
 		print(source, destination)
 		if self.view:
-			self.view.set_status('ZZZ', 'copying "{}" to "{}"'.format(
+			self.view.set_status('SideBarTools:Copy', 'copying "{}" to "{}"'.format(
 				source, destination))
 		else:
 			self.window.status_message('copying "{}" to "{}"'.format(
@@ -90,7 +90,7 @@ class SideBarDuplicateCommand(SideBarCommand):
 			shutil.copy2(source, destination)
 
 		if self.view:
-			self.view.erase_status('ZZZ')
+			self.view.erase_status('SideBarTools:Copy')
 
 	def description(self):
 		return 'Duplicate File…'
