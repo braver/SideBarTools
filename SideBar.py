@@ -77,7 +77,7 @@ class SideBarDuplicateCommand(SideBarCommand):
 
 	def run(self, paths):
 		self.source = self.get_path(paths)
-		base, leaf = os.path.split(self.source)
+		leaf = os.path.split(self.source)[1]
 		name, ext = os.path.splitext(leaf)
 		initial_text = name + ' (Copy)' + ext
 		input_panel = self.window.show_input_panel('Duplicate As:',
@@ -120,7 +120,7 @@ class SideBarMoveCommand(SideBarCommand):
 			'Move to:', self.source, self.on_done, None, None)
 
 		base, leaf = os.path.split(self.source)
-		name, ext = os.path.splitext(leaf)
+		ext = os.path.splitext(leaf)[1]
 
 		input_panel.sel().clear()
 		input_panel.sel().add(sublime.Region(len(base) + 1, len(self.source) - len(ext)))
