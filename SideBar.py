@@ -17,6 +17,24 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 		except IndexError:
 			return self.window.active_view().file_name()
 
+	@staticmethod
+	def make_dirs_for(filename):
+		"""
+		Attempts to create all necessary subdirectories for `filename`.
+
+		Returns True if the tree was created, False otherwise, but doesn't
+		mean we can or cannot write to it. It simply means it was not created
+		by this function.
+		"""
+
+		destination_dir = os.path.dirname(filename)
+		try:
+			os.makedirs(destination_dir)
+			return True
+		except OSError:
+			return False
+
+
 class SideBarCopyNameCommand(SideBarCommand):
 
 	def run(self, paths):
@@ -71,11 +89,12 @@ class SideBarDuplicateCommand(SideBarCommand):
 	def on_done(self, destination):
 		base, _ = os.path.split(self.source)
 		destination = os.path.join(base, destination)
-		threading.Thread(target=self.copy,
-			args=(self.source, destination)).start()
+		threading.Thread(target=self.copy, args=(self.source, destination)).start()
 
 	def copy(self, source, destination):
 		self.window.status_message('Copying "{}" to "{}"'.format(source, destination))
+
+		self.make_dirs_for(destination)
 
 		if os.path.isdir(source):
 			shutil.copytree(source, destination)
@@ -106,11 +125,7 @@ class SideBarMoveCommand(SideBarCommand):
 	def move(self, source, destination):
 		self.window.status_message('Moving "{}" to "{}"'.format(source, destination))
 
-		destination_dir = os.path.dirname(destination)
-		try:
-			os.makedirs(destination_dir)
-		except OSError:
-			print('Destination directory seems to exists...')
+		self.make_dirs_for(destination)
 
 		try:
 			shutil.move(source, destination)
