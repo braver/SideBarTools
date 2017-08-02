@@ -101,7 +101,7 @@ class SideBarDuplicateCommand(SideBarCommand):
 			else:
 				shutil.copy2(source, destination)
 		except OSError as error:
-			self.window.status_message('Error copying "{src}" to "{dst}": {error}'.format(
+			self.window.status_message('Error copying: {error} ("{src}" to "{dst}")'.format(
 				src=source,
 				dst=destination,
 				error=error,
@@ -136,7 +136,7 @@ class SideBarMoveCommand(SideBarCommand):
 		try:
 			shutil.move(source, destination)
 		except OSError as error:
-			self.window.status_message('Error moving "{src}" to "{dst}": {error}'.format(
+			self.window.status_message('Error moving: {error} ("{src}" to "{dst}")'.format(
 				src=source,
 				dst=destination,
 				error=error,
