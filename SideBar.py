@@ -21,10 +21,6 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 	def make_dirs_for(filename):
 		"""
 		Attempts to create all necessary subdirectories for `filename`.
-
-		Returns True if the tree was created, False otherwise, but doesn't
-		mean we can or cannot write to it. It simply means it was not created
-		by this function.
 		"""
 
 		destination_dir = os.path.dirname(filename)
