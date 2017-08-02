@@ -95,11 +95,17 @@ class SideBarDuplicateCommand(SideBarCommand):
 		self.window.status_message('Copying "{}" to "{}"'.format(source, destination))
 
 		self.make_dirs_for(destination)
-
-		if os.path.isdir(source):
-			shutil.copytree(source, destination)
-		else:
-			shutil.copy2(source, destination)
+		try:
+			if os.path.isdir(source):
+				shutil.copytree(source, destination)
+			else:
+				shutil.copy2(source, destination)
+		except OSError as error:
+			self.window.status_message('Error copying "{src}" to "{dst}": {error}'.format(
+				src=source,
+				dst=destination,
+				error=error,
+			))
 
 	def description(self):
 		return 'Duplicate File…'
