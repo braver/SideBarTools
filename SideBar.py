@@ -17,6 +17,24 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 		except IndexError:
 			return self.window.active_view().file_name()
 
+	@staticmethod
+	def make_dirs_for(filename):
+		"""
+		Attempts to create all necessary subdirectories for `filename`.
+
+		Returns True if the tree was created, False otherwise, but doesn't
+		mean we can or cannot write to it. It simply means it was not created
+		by this function.
+		"""
+
+		destination_dir = os.path.dirname(filename)
+		try:
+			os.makedirs(destination_dir)
+			return True
+		except OSError:
+			return False
+
+
 class SideBarCopyNameCommand(SideBarCommand):
 
 	def run(self, paths):
@@ -58,7 +76,6 @@ class SideBarCopyRelativePathCommand(SideBarCommand):
 class SideBarDuplicateCommand(SideBarCommand):
 
 	def run(self, paths):
-		self.view = self.window.active_view()
 		self.source = self.get_path(paths)
 		base, leaf = os.path.split(self.source)
 		name, ext = os.path.splitext(leaf)
@@ -72,43 +89,25 @@ class SideBarDuplicateCommand(SideBarCommand):
 	def on_done(self, destination):
 		base, _ = os.path.split(self.source)
 		destination = os.path.join(base, destination)
-		threading.Thread(target=self.copy,
-			args=(self.source, destination)).start()
+		threading.Thread(target=self.copy, args=(self.source, destination)).start()
 
 	def copy(self, source, destination):
-		print(source, destination)
-		if self.view:
-			self.view.set_status('SideBarTools:Copy', 'copying "{}" to "{}"'.format(
-				source, destination))
-		else:
-			self.window.status_message('copying "{}" to "{}"'.format(
-				source, destination))
+		self.window.status_message('Copying "{}" to "{}"'.format(source, destination))
+
+		self.make_dirs_for(destination)
 
 		if os.path.isdir(source):
 			shutil.copytree(source, destination)
 		else:
 			shutil.copy2(source, destination)
 
-		if self.view:
-			self.view.erase_status('SideBarTools:Copy')
-
 	def description(self):
 		return 'Duplicate File…'
-
-
-def temporary_status_message(view, message, key='SideBarTools', duration=5000):
-	view.set_status(key, message)
-
-	def erase_status():
-		view.erase_status(key)
-
-	sublime.set_timeout_async(erase_status, duration)
 
 
 class SideBarMoveCommand(SideBarCommand):
 
 	def run(self, paths):
-		self.view = self.window.active_view()
 		self.source = self.get_path(paths)
 
 		input_panel = self.window.show_input_panel(
@@ -124,39 +123,18 @@ class SideBarMoveCommand(SideBarCommand):
 		threading.Thread(target=self.move, args=(self.source, destination)).start()
 
 	def move(self, source, destination):
-		print(source, destination)
-		if self.view:
-			self.view.set_status(
-				'SideBarTools:Move', 'Moving "{}" to "{}"'.format(source, destination))
-		else:
-			self.window.status_message(
-				'Moving "{}" to "{}"'.format(source, destination))
+		self.window.status_message('Moving "{}" to "{}"'.format(source, destination))
 
-		destination_dir = os.path.dirname(destination)
-		try:
-			os.makedirs(destination_dir)
-		except OSError:
-			print('Destination directory seems to exists...')
-
-		if self.view:
-			self.view.erase_status('SideBarTools:Move')
+		self.make_dirs_for(destination)
 
 		try:
 			shutil.move(source, destination)
 		except OSError as error:
-			message = 'Error moving "{src}" to "{dst}": {error}'.format(
+			self.window.status_message('Error moving "{src}" to "{dst}": {error}'.format(
 				src=source,
 				dst=destination,
 				error=error,
-			)
-			if self.view:
-				temporary_status_message(
-					self.view,
-					message,
-					key='SideBarTools:Move'
-				)
-			else:
-				print(message)
+			))
 
 	def description(self):
 		return 'Move File…'
