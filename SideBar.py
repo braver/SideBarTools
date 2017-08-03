@@ -21,10 +21,6 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 	def make_dirs_for(filename):
 		"""
 		Attempts to create all necessary subdirectories for `filename`.
-
-		Returns True if the tree was created, False otherwise, but doesn't
-		mean we can or cannot write to it. It simply means it was not created
-		by this function.
 		"""
 
 		destination_dir = os.path.dirname(filename)
@@ -77,7 +73,7 @@ class SideBarDuplicateCommand(SideBarCommand):
 
 	def run(self, paths):
 		self.source = self.get_path(paths)
-		base, leaf = os.path.split(self.source)
+		leaf = os.path.split(self.source)[1]
 		name, ext = os.path.splitext(leaf)
 		initial_text = name + ' (Copy)' + ext
 		input_panel = self.window.show_input_panel('Duplicate As:',
@@ -95,11 +91,17 @@ class SideBarDuplicateCommand(SideBarCommand):
 		self.window.status_message('Copying "{}" to "{}"'.format(source, destination))
 
 		self.make_dirs_for(destination)
-
-		if os.path.isdir(source):
-			shutil.copytree(source, destination)
-		else:
-			shutil.copy2(source, destination)
+		try:
+			if os.path.isdir(source):
+				shutil.copytree(source, destination)
+			else:
+				shutil.copy2(source, destination)
+		except OSError as error:
+			self.window.status_message('Error copying: {error} ("{src}" to "{dst}")'.format(
+				src=source,
+				dst=destination,
+				error=error,
+			))
 
 	def description(self):
 		return 'Duplicate File…'
@@ -114,7 +116,7 @@ class SideBarMoveCommand(SideBarCommand):
 			'Move to:', self.source, self.on_done, None, None)
 
 		base, leaf = os.path.split(self.source)
-		name, ext = os.path.splitext(leaf)
+		ext = os.path.splitext(leaf)[1]
 
 		input_panel.sel().clear()
 		input_panel.sel().add(sublime.Region(len(base) + 1, len(self.source) - len(ext)))
@@ -122,19 +124,49 @@ class SideBarMoveCommand(SideBarCommand):
 	def on_done(self, destination):
 		threading.Thread(target=self.move, args=(self.source, destination)).start()
 
+	@staticmethod
+	def retarget_all_views(source, destination):
+		if source[-1] != os.path.sep:
+			source += os.path.sep
+
+		if destination[-1] != os.path.sep:
+			destination += os.path.sep
+
+		for window in sublime.windows():
+			for view in window.views():
+				filename = view.file_name()
+				if os.path.commonprefix([source, filename]) == source:
+					view.retarget(os.path.join(destination, filename[len(source):]))
+
+	@staticmethod
+	def retarget_view(source, destination):
+		source = os.path.normcase(os.path.abspath(source))
+		destination = os.path.normcase(os.path.abspath(destination))
+		for window in sublime.windows():
+			for view in window.views():
+				if os.path.normcase(os.path.abspath(view.file_name())) == source:
+					view.retarget(destination)
+
 	def move(self, source, destination):
 		self.window.status_message('Moving "{}" to "{}"'.format(source, destination))
 
 		self.make_dirs_for(destination)
 
+		isfile = os.path.isfile(source)
+
 		try:
 			shutil.move(source, destination)
+			if isfile:
+				self.retarget_view(source, destination)
+			else:
+				self.retarget_all_views(source, destination)
 		except OSError as error:
-			self.window.status_message('Error moving "{src}" to "{dst}": {error}'.format(
+			self.window.status_message('Error moving: {error} ("{src}" to "{dst}")'.format(
 				src=source,
 				dst=destination,
 				error=error,
 			))
+		self.window.run_command('refresh_folder_list')
 
 	def description(self):
 		return 'Move File…'
