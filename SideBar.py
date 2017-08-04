@@ -18,7 +18,7 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 			return self.window.active_view().file_name()
 
 	def is_visible(self, paths):
-		return len(paths) == 1
+		return len(paths) < 2
 
 	@staticmethod
 	def make_dirs_for(filename):
