@@ -9,7 +9,7 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 
 	def copy_to_clipboard_and_inform(self, data):
 		sublime.set_clipboard(data)
-		self.window.status_message('copied "{}" to clipboard'.format(data))
+		self.window.status_message('Copied "{}" to clipboard'.format(data))
 
 	def get_path(self, paths):
 		try:
