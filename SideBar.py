@@ -41,6 +41,7 @@ class SideBarCopyNameCommand(SideBarCommand):
 	def description(self):
 		return 'Copy Filename'
 
+
 class SideBarCopyAbsolutePathCommand(SideBarCommand):
 
 	def run(self, paths):
@@ -49,6 +50,7 @@ class SideBarCopyAbsolutePathCommand(SideBarCommand):
 
 	def description(self):
 		return 'Copy Absolute Path'
+
 
 class SideBarCopyRelativePathCommand(SideBarCommand):
 
@@ -68,6 +70,7 @@ class SideBarCopyRelativePathCommand(SideBarCommand):
 
 	def description(self):
 		return 'Copy Relative Path'
+
 
 class SideBarDuplicateCommand(SideBarCommand):
 
