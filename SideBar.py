@@ -22,10 +22,6 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 
 	@staticmethod
 	def make_dirs_for(filename):
-		"""
-		Attempts to create all necessary subdirectories for `filename`.
-		"""
-
 		destination_dir = os.path.dirname(filename)
 		try:
 			os.makedirs(destination_dir)
