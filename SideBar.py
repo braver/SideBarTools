@@ -77,7 +77,12 @@ class SideBarDuplicateCommand(SideBarCommand):
     def run(self, paths):
         self.source = self.get_path(paths)
         leaf = os.path.split(self.source)[1]
+
         name, ext = os.path.splitext(leaf)
+        while '.' in name:
+            name, _ext = os.path.splitext(name)
+            ext = _ext + ext
+
         initial_text = name + ' (Copy)' + ext
         input_panel = self.window.show_input_panel(
             'Duplicate As:',
