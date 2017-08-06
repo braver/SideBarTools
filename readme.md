@@ -26,6 +26,11 @@ and going overboard. This has benefits:
 - It's tiny, light-weight and reliable.
 - We won't [track][3] [you][5]. Ever.
 
+
+## Credits
+
+We used [SidebarEnhancements][1] as a starting point, but completely re-implemented everything we wanted to keep. Now it comes in at just over 200 lines of super clean python with zero legacy. Special thanks go out to [@rwols][6] and [@mandx][7] to make this happen.
+
 ---------
 
 License: [GNU GPL][4]
@@ -35,3 +40,5 @@ License: [GNU GPL][4]
 [2]: https://packagecontrol.io/packages/Open%20in%20Default%20Application
 [4]: http://www.gnu.org/licenses/gpl.html
 [5]: https://forum.sublimetext.com/t/rfc-default-package-control-channel-and-package-telemetry/30157
+[6]: https://github.com/braver/SideBarTools/pull/2
+[7]: https://github.com/braver/SideBarTools/pulls?q=is%3Apr+author%3Amandx
