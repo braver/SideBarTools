@@ -33,42 +33,61 @@ class SideBarCommand(sublime_plugin.WindowCommand):
             return False
 
 
-class SideBarCopyNameCommand(SideBarCommand):
+class MultipleFilesMixin(object):
+
+    def copy_to_clipboard_and_inform(self, data):
+        sublime.set_clipboard(data)
+        # Just inform about the first line of the text data
+        self.window.status_message('Copied "{}..." to clipboard'.format(data.split('\n')[0]))
+
+    def get_paths(self, paths):
+        return paths or [self.get_path(paths)]
+
+    def is_visible(self, paths):
+        return bool(paths or self.window.active_view().file_name())
+
+
+class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
 
     def run(self, paths):
-        path = self.get_path(paths)
-        name = os.path.split(path)[1]
-        self.copy_to_clipboard_and_inform(name)
+        names = (os.path.split(path)[1] for path in self.get_paths(paths))
+        self.copy_to_clipboard_and_inform('\n'.join(names))
 
     def description(self):
         return 'Copy Filename'
 
 
-class SideBarCopyAbsolutePathCommand(SideBarCommand):
+class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
     def run(self, paths):
-        path = self.get_path(paths)
-        self.copy_to_clipboard_and_inform(path)
+        paths = self.get_paths(paths)
+        self.copy_to_clipboard_and_inform('\n'.join(paths))
 
     def description(self):
         return 'Copy Absolute Path'
 
 
-class SideBarCopyRelativePathCommand(SideBarCommand):
+class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
 
     def run(self, paths):
-        path = self.get_path(paths)
         project_file_name = self.window.project_file_name()
         root_dir = ''
         if project_file_name:
             root_dir = os.path.dirname(project_file_name)
         else:
             root_dir = self.window.project_data()['folders'][0]['path']
-        common = os.path.commonprefix([root_dir, path])
-        path = path[len(common):]
-        if path.startswith('/') or path.startswith('\\'):
-            path = path[1:]
-        self.copy_to_clipboard_and_inform(path)
+
+        paths = self.get_paths(paths)
+        relative_paths = []
+
+        for path in paths:
+            common = os.path.commonprefix([root_dir, path])
+            path = path[len(common):]
+            if path.startswith('/') or path.startswith('\\'):
+                path = path[1:]
+            relative_paths.append(path)
+
+        self.copy_to_clipboard_and_inform('\n'.join(relative_paths))
 
     def description(self):
         return 'Copy Relative Path'
