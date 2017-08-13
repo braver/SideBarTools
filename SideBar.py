@@ -4,6 +4,7 @@ import sublime_plugin
 import os
 import threading
 import shutil
+from functools import partial
 
 
 class SideBarCommand(sublime_plugin.WindowCommand):
@@ -77,8 +78,8 @@ class SideBarCopyRelativePathCommand(SideBarCommand):
 class SideBarDuplicateCommand(SideBarCommand):
 
     def run(self, paths):
-        self.source = self.get_path(paths)
-        leaf = os.path.split(self.source)[1]
+        source = self.get_path(paths)
+        leaf = os.path.split(source)[1]
 
         name, ext = os.path.splitext(leaf)
         while '.' in name:
@@ -89,7 +90,7 @@ class SideBarDuplicateCommand(SideBarCommand):
         input_panel = self.window.show_input_panel(
             'Duplicate As:',
             initial_text,
-            self.on_done,
+            partial(self.on_done, source),
             None,
             None
         )
@@ -99,12 +100,12 @@ class SideBarDuplicateCommand(SideBarCommand):
             sublime.Region(0, len(initial_text) - (len(ext)))
         )
 
-    def on_done(self, destination):
-        base, _ = os.path.split(self.source)
+    def on_done(self, source, destination):
+        base, _ = os.path.split(source)
         destination = os.path.join(base, destination)
         threading.Thread(
             target=self.copy,
-            args=(self.source, destination)
+            args=(source, destination)
         ).start()
 
     def copy(self, source, destination):
@@ -134,23 +135,23 @@ class SideBarDuplicateCommand(SideBarCommand):
 class SideBarMoveCommand(SideBarCommand):
 
     def run(self, paths):
-        self.source = self.get_path(paths)
+        source = self.get_path(paths)
 
         input_panel = self.window.show_input_panel(
-            'Move to:', self.source, self.on_done, None, None)
+            'Move to:', source, partial(self.on_done, source), None, None)
 
-        base, leaf = os.path.split(self.source)
+        base, leaf = os.path.split(source)
         ext = os.path.splitext(leaf)[1]
 
         input_panel.sel().clear()
         input_panel.sel().add(
-            sublime.Region(len(base) + 1, len(self.source) - len(ext))
+            sublime.Region(len(base) + 1, len(source) - len(ext))
         )
 
-    def on_done(self, destination):
+    def on_done(self, source, destination):
         threading.Thread(
             target=self.move,
-            args=(self.source, destination)
+            args=(source, destination)
         ).start()
 
     @staticmethod
