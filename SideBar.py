@@ -90,7 +90,7 @@ class SideBarDuplicateCommand(SideBarCommand):
         input_panel = self.window.show_input_panel(
             'Duplicate As:',
             initial_text,
-            partial(self.on_done, partial),
+            partial(self.on_done, source),
             None,
             None
         )
