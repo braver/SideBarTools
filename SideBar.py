@@ -10,7 +10,10 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 
     def copy_to_clipboard_and_inform(self, data):
         sublime.set_clipboard(data)
-        self.window.status_message('Copied "{}" to clipboard'.format(data))
+        lines = len(data.split('\n'))
+        self.window.status_message('Copied {} to clipboard'.format(
+            '{} lines'.format(lines) if lines > 1 else '"{}"'.format(data)
+        ))
 
     def get_path(self, paths):
         try:
@@ -34,11 +37,6 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 
 
 class MultipleFilesMixin(object):
-
-    def copy_to_clipboard_and_inform(self, data):
-        sublime.set_clipboard(data)
-        # Just inform about the first line of the text data
-        self.window.status_message('Copied "{}..." to clipboard'.format(data.split('\n')[0]))
 
     def get_paths(self, paths):
         return paths or [self.get_path(paths)]
