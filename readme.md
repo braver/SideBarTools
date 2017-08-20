@@ -29,7 +29,7 @@ and going overboard. This has benefits:
 
 ## Credits
 
-We used [SidebarEnhancements][1] as a starting point, but completely re-implemented everything we wanted to keep. Now it comes in at just over 200 lines of super clean python with zero legacy. Special thanks go out to [@rwols][6] and [@mandx][7] to make this happen.
+We used [SidebarEnhancements][1] as a starting point, but completely re-implemented everything we wanted to keep. Now it comes in at just over 200 lines of super clean Python with zero legacy. Special thanks go out to [@rwols][6] and [@mandx][7] to make this happen.
 
 
 [1]: https://packagecontrol.io/packages/SideBarEnhancements
