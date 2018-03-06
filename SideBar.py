@@ -102,6 +102,8 @@ class SideBarDuplicateCommand(SideBarCommand):
             while '.' in name:
                 name, _ext = os.path.splitext(name)
                 ext = _ext + ext
+                if _ext is '':
+                    break
 
         initial_text = name + ' (Copy)' + ext
         input_panel = self.window.show_input_panel(
