@@ -95,7 +95,7 @@ class SideBarDuplicateCommand(SideBarCommand):
 
     def run(self, paths):
         source = self.get_path(paths)
-        leaf = os.path.split(source)[1]
+        base, leaf = os.path.split(source)
 
         name, ext = os.path.splitext(leaf)
         if ext is not '':
@@ -105,18 +105,14 @@ class SideBarDuplicateCommand(SideBarCommand):
                 if _ext is '':
                     break
 
-        initial_text = name + ' (Copy)' + ext
+        source = self.get_path(paths)
+
         input_panel = self.window.show_input_panel(
-            'Duplicate As:',
-            initial_text,
-            partial(self.on_done, source),
-            None,
-            None
-        )
+            'Duplicate As:', source, partial(self.on_done, source), None, None)
 
         input_panel.sel().clear()
         input_panel.sel().add(
-            sublime.Region(0, len(initial_text) - (len(ext)))
+            sublime.Region(len(base) + 1, len(source) - len(ext))
         )
 
     def on_done(self, source, destination):
