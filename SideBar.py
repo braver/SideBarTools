@@ -134,6 +134,7 @@ class SideBarDuplicateCommand(SideBarCommand):
                 shutil.copytree(source, destination)
             else:
                 shutil.copy2(source, destination)
+                self.window.open_file(destination)
         except OSError as error:
             self.window.status_message(
                 'Error copying: {error} ("{src}" to "{dst}")'.format(
