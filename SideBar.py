@@ -21,7 +21,7 @@ class SideBarCommand(sublime_plugin.WindowCommand):
         except IndexError:
             return self.window.active_view().file_name()
 
-    def is_visible(self, paths):
+    def is_visible(self, paths = []):
         if paths:
             return len(paths) < 2
         return bool(self.window.active_view().file_name())
@@ -41,7 +41,7 @@ class MultipleFilesMixin(object):
     def get_paths(self, paths):
         return paths or [self.get_path(paths)]
 
-    def is_visible(self, paths):
+    def is_visible(self, paths = []):
         return bool(paths or self.window.active_view().file_name())
 
 
