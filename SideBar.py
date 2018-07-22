@@ -68,22 +68,22 @@ class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
 
     def run(self, paths):
-        project_file_name = self.window.project_file_name()
-        root_dir = ''
-        if project_file_name:
-            root_dir = os.path.dirname(project_file_name)
-        else:
-            root_dir = self.window.folders()[0]
-
         paths = self.get_paths(paths)
+        root_paths = self.window.folders()
         relative_paths = []
 
         for path in paths:
-            common = os.path.commonprefix([root_dir, path])
-            path = path[len(common):]
-            if path.startswith('/') or path.startswith('\\'):
-                path = path[1:]
-            relative_paths.append(path)
+            if not root_paths:  # e.g. single file and using command palette
+                relative_paths.append(os.path.basename(path))
+            else:
+                for root in root_paths:
+                    if path.startswith(root):
+                        p = os.path.relpath(path, root)
+                        relative_paths.append(p)
+                        break
+
+        if not relative_paths:
+            relative_paths.append(os.path.basename(path))
 
         self.copy_to_clipboard_and_inform('\n'.join(relative_paths))
 
