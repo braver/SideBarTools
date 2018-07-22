@@ -73,7 +73,7 @@ class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
         if project_file_name:
             root_dir = os.path.dirname(project_file_name)
         else:
-            root_dir = self.window.project_data()['folders'][0]['path']
+            root_dir = self.window.folders()[0]
 
         paths = self.get_paths(paths)
         relative_paths = []
