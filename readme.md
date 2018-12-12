@@ -17,7 +17,7 @@ All except Compare are also available via the command palette, in addition to:
 
 - Reveal In Sidebar
 
-To use the Compare command, configure a "difftool". For instance, [Xcode][4] comes with FileMerge that you can call via `opendiff`. The command will then become available when two files, or two folders are selected.
+To use the Compare command, configure a ["difftool"](https://github.com/braver/SideBarTools/blob/master/SideBarTools.sublime-settings). For instance, [Xcode][4] comes with FileMerge that you can call via `opendiff`. The command will then become available when two files, or two folders are selected.
 
 To open a file in its default application, consider installing the [Open in Default Application][2] package.
 
