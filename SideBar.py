@@ -1,9 +1,22 @@
 import sublime
 import sublime_plugin
+import subprocess
 import os
 import threading
 import shutil
 from functools import partial
+
+
+def get_setting(self, setting):
+    '''
+    Sublime merges everything, including project settings, into view.settings
+    Package specific settings can be set via namespaced dot-syntax everywhere
+    '''
+    defaults = sublime.load_settings("SideBarTools.sublime-settings")
+    default_tool = defaults.get(setting)
+    merged_settings = self.window.active_view().settings()
+
+    return merged_settings.get('SideBarTools.' + setting, default_tool)
 
 
 class SideBarCommand(sublime_plugin.WindowCommand):
@@ -34,6 +47,24 @@ class SideBarCommand(sublime_plugin.WindowCommand):
             return True
         except OSError:
             return False
+
+
+class SideBarCompareCommand(sublime_plugin.WindowCommand):
+
+    def is_visible(self, paths):
+        return get_setting(self, 'difftool') and len(paths) is 2
+
+    def is_enabled(self, paths):
+        if not get_setting(self, 'difftool') or len(paths) < 2:
+            return False
+        return os.path.isdir(paths[0]) is os.path.isdir(paths[1])
+
+    def run(self, paths):
+        tool = get_setting(self, 'difftool')
+        if tool:
+            subprocess.Popen([tool, paths[0], paths[1]])
+        else:
+            self.window.status_message("No diff tool configured")
 
 
 class MultipleFilesMixin(object):

@@ -1,0 +1,8 @@
+{
+	// What tool to use for the Compare command
+	// Examples:
+	//   - "opendiff"   (opens FileMerge on a Mac, requires Xcode)
+	//   - "bcompare"   (opens Beyond Compare)
+	// Set to false to disable comparison
+    "difftool": false,
+}
