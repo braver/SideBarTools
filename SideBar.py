@@ -62,7 +62,9 @@ class SideBarCompareCommand(sublime_plugin.WindowCommand):
     def run(self, paths):
         tool = get_setting(self, 'difftool')
         if tool:
-            subprocess.Popen([tool, paths[0], paths[1]])
+            if type(tool) is str:
+                tool = [tool]
+            subprocess.Popen(tool + paths[:2])
         else:
             self.window.status_message("No diff tool configured")
 
