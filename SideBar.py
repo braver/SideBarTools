@@ -52,7 +52,7 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 class SideBarCompareCommand(sublime_plugin.WindowCommand):
 
     def is_visible(self, paths):
-        return get_setting(self, 'difftool') and len(paths) is 2
+        return get_setting(self, 'difftool') and len(paths) == 2
 
     def is_enabled(self, paths):
         if not get_setting(self, 'difftool') or len(paths) < 2:
@@ -62,7 +62,9 @@ class SideBarCompareCommand(sublime_plugin.WindowCommand):
     def run(self, paths):
         tool = get_setting(self, 'difftool')
         if tool:
-            subprocess.Popen([tool, paths[0], paths[1]])
+            if type(tool) is str:
+                tool = [tool]
+            subprocess.Popen(tool + paths[:2])
         else:
             self.window.status_message("No diff tool configured")
 
@@ -129,11 +131,11 @@ class SideBarDuplicateCommand(SideBarCommand):
         base, leaf = os.path.split(source)
 
         name, ext = os.path.splitext(leaf)
-        if ext is not '':
+        if ext != '':
             while '.' in name:
                 name, _ext = os.path.splitext(name)
                 ext = _ext + ext
-                if _ext is '':
+                if _ext == '':
                     break
 
         source = self.get_path(paths)
