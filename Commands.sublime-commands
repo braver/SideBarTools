@@ -34,12 +34,13 @@
 		"command": "side_bar_move",
 		"args": { "paths": [] }
 	},
-    {
-        "caption": "Preferences: SideBarTools Settings",
-        "command": "edit_settings", "args":
-        {
-            "base_file": "${packages}/SideBarTools/SideBarTools.sublime-settings",
-            "default": "// SideBarTools Settings - User\n{\n\t$0\n}\n"
-        }
-    }
+	{
+		"caption": "Preferences: SideBarTools Settings",
+		"command": "edit_settings",
+		"args":
+		{
+		    "base_file": "${packages}/SideBarTools/SideBarTools.sublime-settings",
+		    "default": "// SideBarTools Settings - User\n{\n\t$0\n}\n"
+		}
+	}
 ]
