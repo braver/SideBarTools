@@ -29,11 +29,6 @@
 		"command": "side_bar_move",
 		"args": { "paths": [] }
 	},
-	{
-		"caption": "File: Move",
-		"command": "side_bar_move",
-		"args": { "paths": [] }
-	},
     {
         "caption": "Preferences: SideBarTools Settings",
         "command": "edit_settings", "args":
