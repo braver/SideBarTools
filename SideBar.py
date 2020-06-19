@@ -256,3 +256,76 @@ class SideBarMoveCommand(SideBarCommand):
 
     def description(self):
         return 'Move File…'
+
+
+class SideBarDeleteCommand(sublime_plugin.WindowCommand):
+
+    def is_visible(self):
+        return self.window.active_view().file_name() is not None
+
+    def run(self, close=False):
+        file_name = self.window.active_view().file_name()
+        if file_name is not None:
+            self._remove(file_name)
+            if close:
+                # Close the active view, but no other view of the same file.
+                self._close_view()
+
+    @staticmethod
+    def _remove(file_name):
+        # Try using built-in functionality to send files to the trash.
+        # This implementation uses the OS specific mechanism.
+        try:
+            from Default import send2trash
+            remove = send2trash.send2trash
+        except ImportError:
+            import os
+            remove = os.remove
+        remove(file_name)
+
+    def _close_view(self):
+        view = self.window.active_view()
+        # Setting to scratch prevents the save dialog from coming up.
+        view.set_scratch(True)
+        view.close()
+
+
+class SideBarNewFileCommand(sublime_plugin.WindowCommand):
+
+    def is_visible(self, base):
+        return base in self.window.extract_variables()
+
+    def run(self, base):
+        folders = self.window.folders()
+        if base == "folder" and len(folders) != 1:
+            shortened_folders = self._shorten_common_prefix(folders)
+            self.window.show_quick_panel(
+                shortened_folders,
+                lambda idx: idx != -1 and self._name_dialog(folders[idx]))
+        else:
+            self._name_dialog(self.window.extract_variables()[base])
+
+    def _name_dialog(self, folder):
+        dir = folder if folder.endswith(os.path.sep) else folder + os.path.sep
+        self.window.show_input_panel(
+            "New File:", dir, self._new_file, None, None)
+
+    def _new_file(self, file):
+        try:
+            os.makedirs(os.path.dirname(file), exist_ok=True)
+            if not os.path.exists(file):
+                open(file, "a").close()
+        except OSError as e:
+            sublime.error_message(
+                "{}:{}{}".format(e.strerror, os.linesep, e.filename))
+        else:
+            self.window.open_file(file)
+
+    @staticmethod
+    def _shorten_common_prefix(folders):
+        prefix = os.path.commonprefix(folders).rstrip(os.path.sep)
+        if prefix:
+            short = "~" if prefix == os.path.expanduser("~") else "\u2026"
+            return [short + folder[len(prefix):] for folder in folders]
+        else:
+            return folders

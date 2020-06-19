@@ -37,5 +37,29 @@
 		    "base_file": "${packages}/SideBarTools/SideBarTools.sublime-settings",
 		    "default": "// SideBarTools Settings - User\n{\n\t$0\n}\n"
 		}
+	},
+	{
+		"caption": "File: Delete",
+		"command": "side_bar_delete"
+	},
+	{
+		"caption": "File: Delete and Close",
+		"command": "side_bar_delete",
+		"args": { "close": true }
+	},
+	{
+		"caption": "File: New Relative To Current File",
+		"command": "side_bar_new_file",
+		"args": { "base": "file_path" }
+	},
+	{
+		"caption": "File: New Relative To Project Root",
+		"command": "side_bar_new_file",
+		"args": { "base": "project_path" }
+	},
+	{
+		"caption": "File: New Relative To Base Folder",
+		"command": "side_bar_new_file",
+		"args": { "base": "folder" }
 	}
 ]
