@@ -213,7 +213,7 @@ class SideBarMoveCommand(SideBarCommand):
 
         for window in sublime.windows():
             for view in window.views():
-                filename = view.file_name()
+                filename = view.file_name() or ''
                 if os.path.commonprefix([source, filename]) == source:
                     view.retarget(
                         os.path.join(destination, filename[len(source):])
@@ -225,7 +225,7 @@ class SideBarMoveCommand(SideBarCommand):
         destination = os.path.normcase(os.path.abspath(destination))
         for window in sublime.windows():
             for view in window.views():
-                path = os.path.abspath(view.file_name())
+                path = os.path.abspath(view.file_name() or '')
                 if os.path.normcase(path) == source:
                     view.retarget(destination)
 
