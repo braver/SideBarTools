@@ -44,3 +44,9 @@ We used [SidebarEnhancements][1] as a starting point, but completely re-implemen
 [5]: https://forum.sublimetext.com/t/rfc-default-package-control-channel-and-package-telemetry/30157
 [6]: https://github.com/braver/SideBarTools/pull/2
 [7]: https://github.com/braver/SideBarTools/pulls?q=is%3Apr+author%3Amandx
+
+## Buy me a coffee 
+
+☕️👌🏻
+
+Please feel free to make a little [donation via PayPal](https://paypal.me/koenlageveen) towards the coffee that keeps this labour of love running. It's much appreciated!
