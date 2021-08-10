@@ -261,3 +261,16 @@ class SideBarMoveCommand(SideBarCommand):
 
     def description(self):
         return 'Move File…'
+
+
+class RemoveFolderListener(sublime_plugin.EventListener):
+
+    def on_post_window_command(self, window, command_name, args):
+        if command_name == 'delete_folder':
+            for folder in window.project_data()['folders']:
+                if not os.path.exists(folder['path']):
+                    window.run_command(
+                        'remove_folder',
+                        {
+                            'dirs': [folder['path']]
+                        })
