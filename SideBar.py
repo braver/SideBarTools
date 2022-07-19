@@ -7,14 +7,14 @@ import shutil
 from functools import partial
 
 
-def get_setting(self, setting):
+def get_setting(window_command, setting):
     '''
     Sublime merges everything, including project settings, into view.settings
     Package specific settings can be set via namespaced dot-syntax everywhere
     '''
     defaults = sublime.load_settings("SideBarTools.sublime-settings")
     default_tool = defaults.get(setting)
-    merged_settings = self.window.active_view().settings()
+    merged_settings = window_command.window.active_view().settings()
 
     return merged_settings.get('SideBarTools.' + setting, default_tool)
 
@@ -274,3 +274,48 @@ class RemoveFolderListener(sublime_plugin.EventListener):
                         {
                             'dirs': [folder['path']]
                         })
+
+
+class SideBarNewCommand(SideBarCommand):
+    NEW_FILENAME = 'New file.txt'
+
+    def run(self, paths):
+        source = self.get_path(paths)
+
+        base = source if os.path.isdir(source) else os.path.split(source)[0]
+        new_filename = os.path.join(base, self.NEW_FILENAME)
+
+        input_panel = self.window.show_input_panel(
+            'New file\'s path:', new_filename, self.on_done, None, None)
+
+        input_panel.sel().clear()
+        input_panel.sel().add(sublime.Region(len(base) + 1, len(new_filename)))
+
+    def on_done(self, filename):
+        if filename.endswith(os.path.sep):
+            self.window.status_message(
+                'Filenames that end with "{sep}" are not allowed'.format(
+                    sep=os.path.sep))
+        else:
+            threading.Thread(target=self.create_file, args=(filename,)).start()
+
+    def create_file(self, filename):
+        self.window.status_message('Creating "{filename}"'.format(filename=filename))
+
+        if os.path.exists(filename):
+            self.window.status_message('"{filename}" already exists'.format(filename=filename))
+            return
+
+        self.make_dirs_for(filename)
+
+        try:
+            with open(filename, 'wb') as fileobj:
+                fileobj.write(b'')
+            self.window.open_file(filename)
+        except OSError as error:
+            self.window.status_message(
+                'Error creating "{filename}": {error}'.format(filename=filename, error=error),
+            )
+
+    def description(self):
+        return 'New File…'

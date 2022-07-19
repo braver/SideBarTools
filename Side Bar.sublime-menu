@@ -28,6 +28,11 @@
 		"args": { "paths": [] }
 	},
 	{
+		"caption": "New…",
+		"command": "side_bar_new",
+		"args": { "paths": [] }
+	},
+	{
 		"caption": "Compare",
 		"command": "side_bar_compare",
 		"args": { "paths": [] }
