@@ -303,19 +303,20 @@ class SideBarNewCommand(SideBarCommand):
         self.window.status_message('Creating "{filename}"'.format(filename=filename))
 
         if os.path.exists(filename):
-            self.window.status_message('"{filename}" already exists'.format(filename=filename))
-            return
-
-        self.make_dirs_for(filename)
-
-        try:
-            with open(filename, 'wb') as fileobj:
-                fileobj.write(b'')
-            self.window.open_file(filename)
-        except OSError as error:
-            self.window.status_message(
-                'Error creating "{filename}": {error}'.format(filename=filename, error=error),
+            sublime.message_dialog(
+                '"{filename}" already exists; Opening it anyway...'.format(filename=filename)
             )
+        else:
+            self.make_dirs_for(filename)
+            try:
+                with open(filename, 'wb') as fileobj:
+                    fileobj.write(b'')
+            except OSError as error:
+                self.window.status_message(
+                    'Error creating "{filename}": {error}'.format(filename=filename, error=error),
+                )
+
+        self.window.open_file(filename)
 
     def description(self):
         return 'New File…'
