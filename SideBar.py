@@ -304,7 +304,7 @@ class SideBarNewCommand(SideBarCommand):
 
         if os.path.exists(filename):
             sublime.message_dialog(
-                '"{filename}" already exists; Opening it anyway...'.format(filename=filename)
+                'Opening existing file "{filename}"'.format(filename=filename)
             )
         else:
             self.make_dirs_for(filename)
