@@ -46,6 +46,7 @@ class SideBarCommand(sublime_plugin.WindowCommand):
             os.makedirs(destination_dir)
             return True
         except OSError:
+            # TODO: It would be nice to surface this error to the user...
             return False
 
 
@@ -281,42 +282,56 @@ class SideBarNewCommand(SideBarCommand):
 
     def run(self, paths):
         source = self.get_path(paths)
+        select_extension = False
 
-        base = source if os.path.isdir(source) else os.path.split(source)[0]
-        new_filename = os.path.join(base, self.NEW_FILENAME)
+        if os.path.isdir(source):
+            source = os.path.join(source, self.NEW_FILENAME)
+            select_extension = True
+
+        filepath, filename = os.path.split(source)
+        fileext = os.path.splitext(filename)[1]
 
         input_panel = self.window.show_input_panel(
-            'New file\'s path:', new_filename, self.on_done, None, None)
+            'New path:', source, self.on_done, None, None)
 
-        input_panel.sel().clear()
-        input_panel.sel().add(sublime.Region(len(base) + 1, len(new_filename)))
+        selection = input_panel.sel()
+        selection.clear()
+        selection.add(sublime.Region(
+            len(filepath) + 1,
+            len(filepath) + 1 + len(filename) - (0 if select_extension else len(fileext)),
+        ))
 
-    def on_done(self, filename):
-        if filename.endswith(os.path.sep):
-            self.window.status_message(
-                'Filenames that end with "{sep}" are not allowed'.format(
-                    sep=os.path.sep))
+    def on_done(self, path):
+        if path.endswith(os.path.sep) or path.endswith('/') or path.endswith('\\'):
+            threading.Thread(target=self.create_directory, args=(path,)).start()
         else:
-            threading.Thread(target=self.create_file, args=(filename,)).start()
+            threading.Thread(target=self.create_file, args=(path,)).start()
 
-    def create_file(self, filename):
-        self.window.status_message('Creating "{filename}"'.format(filename=filename))
+    def create_directory(self, path):
+        self.window.status_message('Creating directory "{path}"'.format(path=path))
+        if not self.make_dirs_for(os.path.join(path, 'dummy.file')):
+            sublime.message_dialog('Directory "{path}" could not be created'.format(path=path))
+        else:
+            self.window.status_message('Directory "{path}" created'.format(path=path))
 
-        if os.path.exists(filename):
+    def create_file(self, path):
+        self.window.status_message('Creating file "{path}"'.format(path=path))
+
+        if os.path.exists(path):
             sublime.message_dialog(
-                'Opening existing file "{filename}"'.format(filename=filename)
+                'Opening existing file "{path}"'.format(path=path)
             )
         else:
-            self.make_dirs_for(filename)
+            self.make_dirs_for(path)
             try:
-                with open(filename, 'wb') as fileobj:
+                with open(path, 'wb') as fileobj:
                     fileobj.write(b'')
             except OSError as error:
                 self.window.status_message(
-                    'Error creating "{filename}": {error}'.format(filename=filename, error=error),
+                    'Error creating "{path}": {error}'.format(path=path, error=error),
                 )
 
-        self.window.open_file(filename)
+        self.window.open_file(path)
 
     def description(self):
-        return 'New File…'
+        return 'New…'
