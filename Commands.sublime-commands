@@ -30,7 +30,7 @@
 		"args": { "paths": [] }
 	},
 	{
-		"caption": "New…",
+		"caption": "File: New…",
 		"command": "side_bar_new",
 		"args": { "paths": [] }
 	},
