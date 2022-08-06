@@ -7,14 +7,14 @@ import shutil
 from functools import partial
 
 
-def get_setting(self, setting):
+def get_setting(window_command, setting):
     '''
     Sublime merges everything, including project settings, into view.settings
     Package specific settings can be set via namespaced dot-syntax everywhere
     '''
     defaults = sublime.load_settings("SideBarTools.sublime-settings")
     default_tool = defaults.get(setting)
-    merged_settings = self.window.active_view().settings()
+    merged_settings = window_command.window.active_view().settings()
 
     return merged_settings.get('SideBarTools.' + setting, default_tool)
 
@@ -46,23 +46,24 @@ class SideBarCommand(sublime_plugin.WindowCommand):
             os.makedirs(destination_dir)
             return True
         except OSError:
+            # TODO: It would be nice to surface this error to the user...
             return False
 
 
 class SideBarCompareCommand(sublime_plugin.WindowCommand):
 
     def is_visible(self, paths):
-        return get_setting(self, 'difftool') and len(paths) == 2
+        return len(paths) == 2 and get_setting(self, 'difftool')
 
     def is_enabled(self, paths):
-        if not get_setting(self, 'difftool') or len(paths) < 2:
+        if len(paths) < 2 or not get_setting(self, 'difftool'):
             return False
-        return os.path.isdir(paths[0]) is os.path.isdir(paths[1])
+        return os.path.isdir(paths[0]) == os.path.isdir(paths[1])
 
     def run(self, paths):
         tool = get_setting(self, 'difftool')
         if tool:
-            if type(tool) is str:
+            if isinstance(tool, str):
                 tool = [tool]
             subprocess.Popen(tool + paths[:2])
         else:
@@ -274,3 +275,63 @@ class RemoveFolderListener(sublime_plugin.EventListener):
                         {
                             'dirs': [folder['path']]
                         })
+
+
+class SideBarNewCommand(SideBarCommand):
+    NEW_FILENAME = 'New file.txt'
+
+    def run(self, paths):
+        source = self.get_path(paths)
+        select_extension = False
+
+        if os.path.isdir(source):
+            source = os.path.join(source, self.NEW_FILENAME)
+            select_extension = True
+
+        filepath, filename = os.path.split(source)
+        fileext = os.path.splitext(filename)[1]
+
+        input_panel = self.window.show_input_panel(
+            'New path:', source, self.on_done, None, None)
+
+        selection = input_panel.sel()
+        selection.clear()
+        selection.add(sublime.Region(
+            len(filepath) + 1,
+            len(filepath) + 1 + len(filename) - (0 if select_extension else len(fileext)),
+        ))
+
+    def on_done(self, path):
+        if path.endswith(os.path.sep) or path.endswith('/') or path.endswith('\\'):
+            threading.Thread(target=self.create_directory, args=(path,)).start()
+        else:
+            threading.Thread(target=self.create_file, args=(path,)).start()
+
+    def create_directory(self, path):
+        self.window.status_message('Creating directory "{path}"'.format(path=path))
+        if not self.make_dirs_for(os.path.join(path, 'dummy.file')):
+            sublime.message_dialog('Directory "{path}" could not be created'.format(path=path))
+        else:
+            self.window.status_message('Directory "{path}" created'.format(path=path))
+
+    def create_file(self, path):
+        self.window.status_message('Creating file "{path}"'.format(path=path))
+
+        if os.path.exists(path):
+            sublime.message_dialog(
+                'Opening existing file "{path}"'.format(path=path)
+            )
+        else:
+            self.make_dirs_for(path)
+            try:
+                with open(path, 'wb') as fileobj:
+                    fileobj.write(b'')
+            except OSError as error:
+                self.window.status_message(
+                    'Error creating "{path}": {error}'.format(path=path, error=error),
+                )
+
+        self.window.open_file(path)
+
+    def description(self):
+        return 'New…'

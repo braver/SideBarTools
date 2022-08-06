@@ -20,13 +20,18 @@
 		"args": { "paths": [] }
 	},
 	{
-		"caption": "File: Duplicate",
+		"caption": "File: Duplicate…",
 		"command": "side_bar_duplicate",
 		"args": { "paths": [] }
 	},
 	{
-		"caption": "File: Move",
+		"caption": "File: Move…",
 		"command": "side_bar_move",
+		"args": { "paths": [] }
+	},
+	{
+		"caption": "File: New…",
+		"command": "side_bar_new",
 		"args": { "paths": [] }
 	},
 	{
