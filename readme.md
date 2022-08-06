@@ -12,6 +12,7 @@ Some useful tools to add to your sidebar context menu:
 - Duplicate
 - Move
 - Compare
+- New file
 
 All except Compare are also available via the command palette, in addition to:
 
