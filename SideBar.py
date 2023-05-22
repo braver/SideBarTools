@@ -81,7 +81,7 @@ class MultipleFilesMixin(object):
 
 class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
 
-    def run(self, paths):
+    def run(self, paths=[]):
         names = (os.path.split(path)[1] for path in self.get_paths(paths))
         self.copy_to_clipboard_and_inform('\n'.join(names))
 
@@ -91,7 +91,7 @@ class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
 
 class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
-    def run(self, paths):
+    def run(self, paths=[]):
         paths = self.get_paths(paths)
         self.copy_to_clipboard_and_inform('\n'.join(paths))
 
@@ -101,7 +101,7 @@ class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
 class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
 
-    def run(self, paths):
+    def run(self, paths=[]):
         paths = self.get_paths(paths)
         root_paths = self.window.folders()
         relative_paths = []
