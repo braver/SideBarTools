@@ -9,7 +9,7 @@ Some useful tools to add to your sidebar context menu:
 - Copy Filename
 - Copy Relative Path
 - Copy Absolute Path
-- Duplicate
+- Duplicate (ie. copy to a target path)
 - Move
 - Compare
 - New file
