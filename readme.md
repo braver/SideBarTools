@@ -1,7 +1,5 @@
 # Sidebar Tools
 
-![Travis Status](https://travis-ci.com/braver/SideBarTools.svg?branch=master)
-
 <img src="https://raw.githubusercontent.com/braver/SideBarTools/master/screenshot.png" width="502">
 
 Some useful tools to add to your sidebar context menu:
