@@ -3,7 +3,7 @@ name: Lint
 on: [push]
 
 jobs:
-  build:
+  flake8:
     runs-on: macos-latest
     steps:
     - uses: actions/checkout@v3
