@@ -3,6 +3,11 @@
 		"id": "SideBarTools", "caption": "-"
 	},
 	{
+		"caption": "Edit",
+		"command": "side_bar_edit",
+		"args": { "paths": [] }
+	},
+	{
 		"caption": "Copy Filename",
 		"command": "side_bar_copy_name",
 		"args": { "paths": [] }
