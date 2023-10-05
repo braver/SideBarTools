@@ -348,15 +348,6 @@ class SideBarEditCommand(SideBarCommand):
     
     def run(self, paths):
         source = self.get_path(paths)
-        select_extension = False
-
-        if os.path.isdir(source):
-            source = os.path.join(source, self.NEW_FILENAME)
-            select_extension = True
-
-        filepath, filename = os.path.split(source)
-        fileext = os.path.splitext(filename)[1]
-
         self.window.open_file(source)
 
     def description(self):
