@@ -25,6 +25,13 @@ def get_setting(window_command, setting):
 
 class SideBarCommand(sublime_plugin.WindowCommand):
 
+    def is_visible(self, paths=[], context=""):
+        if context == 'tab' and not get_setting(self, 'tab_context'):
+            return False
+        if paths:
+            return len(paths) < 2
+        return bool(self.window.active_view().file_name())
+
     def copy_to_clipboard_and_inform(self, data):
         sublime.set_clipboard(data)
         lines = len(data.split('\n'))
@@ -37,11 +44,6 @@ class SideBarCommand(sublime_plugin.WindowCommand):
             return paths[0]
         except IndexError:
             return self.window.active_view().file_name()
-
-    def is_visible(self, paths=[]):
-        if paths:
-            return len(paths) < 2
-        return bool(self.window.active_view().file_name())
 
     @staticmethod
     def make_dirs_for(filename):
@@ -56,10 +58,10 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 
 class SideBarCompareCommand(sublime_plugin.WindowCommand):
 
-    def is_visible(self, paths):
+    def is_visible(self, paths, context=""):
         return len(paths) == 2 and bool(get_setting(self, 'difftool'))
 
-    def is_enabled(self, paths):
+    def is_enabled(self, paths, context=""):
         if len(paths) < 2 or not get_setting(self, 'difftool'):
             return False
         return os.path.isdir(paths[0]) == os.path.isdir(paths[1])
@@ -95,12 +97,12 @@ class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
 
 class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
-    def is_visible(self, paths=[], trigger=""):
+    def is_visible(self, paths=[], context=""):
         # in 4158 ST gets the "copy path" sidebar context entry
         # we want to keep our command palette entry though
-        if trigger != 'palette' and int(sublime.version()) >= 4158:
+        if context != 'palette' and int(sublime.version()) >= 4158:
             return False
-        return super().is_visible(paths)
+        return super().is_visible(paths, context)
 
     def run(self, paths=[]):
         paths = self.get_paths(paths)

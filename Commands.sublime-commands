@@ -17,7 +17,7 @@
 	{
 		"caption": "File: Copy Absolute Path",
 		"command": "side_bar_copy_absolute_path",
-		"args": { "paths": [], "trigger": "palette" }
+		"args": { "paths": [], "context": "palette" }
 	},
 	{
 		"caption": "File: Duplicate…",

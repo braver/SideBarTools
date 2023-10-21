@@ -9,4 +9,7 @@
 
 	// Add the Edit item to the Side Bar menu
 	"edit_command": false,
+
+	// Enable the Tab Context menu
+	"tab_context": true
 }

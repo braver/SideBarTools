@@ -5,36 +5,36 @@
 	{
 		"caption": "Copy Filename",
 		"command": "side_bar_copy_name",
-		"args": { "paths": [] }
+		"args": { "paths": [], "context": "tab" }
 	},
 	{
 		"caption": "Copy Relative Path",
 		"command": "side_bar_copy_relative_path",
-		"args": { "paths": [] }
+		"args": { "paths": [], "context": "tab" }
 	},
 	{
 		"caption": "Copy Absolute Path",
 		"command": "side_bar_copy_absolute_path",
-		"args": { "paths": [] }
+		"args": { "paths": [], "context": "tab" }
 	},
 	{
 		"caption": "Duplicate…",
 		"command": "side_bar_duplicate",
-		"args": { "paths": [] }
+		"args": { "paths": [], "context": "tab" }
 	},
 	{
 		"caption": "Move…",
 		"command": "side_bar_move",
-		"args": { "paths": [] }
+		"args": { "paths": [], "context": "tab" }
 	},
 	{
 		"caption": "New…",
 		"command": "side_bar_new",
-		"args": { "paths": [] }
+		"args": { "paths": [], "context": "tab" }
 	},
 	{
 		"caption": "Compare",
 		"command": "side_bar_compare",
-		"args": { "paths": [] }
+		"args": { "paths": [], "context": "tab" }
 	}
 ]
