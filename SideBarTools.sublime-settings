@@ -6,4 +6,7 @@
 	//   - ["smerge", "mergetool"]   (opens Sublime Merge's Merge Tool)
 	// Set to false to disable comparison
 	"difftool": false,
+
+	// Add the Edit item to the Side Bar menu
+	"edit_command": false,
 }

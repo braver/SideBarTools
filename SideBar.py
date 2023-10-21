@@ -14,9 +14,13 @@ def get_setting(window_command, setting):
     '''
     defaults = sublime.load_settings("SideBarTools.sublime-settings")
     default_tool = defaults.get(setting)
-    merged_settings = window_command.window.active_view().settings()
 
-    return merged_settings.get('SideBarTools.' + setting, default_tool)
+    try:
+        # some views, e.g. of images, don't have settings
+        merged_settings = window_command.window.active_view().settings()
+        return merged_settings.get('SideBarTools.' + setting, default_tool)
+    except Exception:
+        return None
 
 
 class SideBarCommand(sublime_plugin.WindowCommand):
@@ -345,7 +349,10 @@ class SideBarNewCommand(SideBarCommand):
 
 
 class SideBarEditCommand(SideBarCommand):
-    
+
+    def is_visible(self, paths):
+        return get_setting(self, 'edit_command') or False
+
     def run(self, paths):
         source = self.get_path(paths)
         self.window.open_file(source)
