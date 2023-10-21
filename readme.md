@@ -2,7 +2,7 @@
 
 <img src="https://raw.githubusercontent.com/braver/SideBarTools/master/screenshot.png" width="502">
 
-Some useful tools to add to your sidebar context menu:
+Some useful tools to add to your sidebar and tab context menu's:
 
 - Copy Filename
 - Copy Relative Path

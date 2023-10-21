@@ -1,0 +1,40 @@
+[
+	{
+		"id": "SideBarTools", "caption": "-"
+	},
+	{
+		"caption": "Copy Filename",
+		"command": "side_bar_copy_name",
+		"args": { "paths": [] }
+	},
+	{
+		"caption": "Copy Relative Path",
+		"command": "side_bar_copy_relative_path",
+		"args": { "paths": [] }
+	},
+	{
+		"caption": "Copy Absolute Path",
+		"command": "side_bar_copy_absolute_path",
+		"args": { "paths": [] }
+	},
+	{
+		"caption": "Duplicate…",
+		"command": "side_bar_duplicate",
+		"args": { "paths": [] }
+	},
+	{
+		"caption": "Move…",
+		"command": "side_bar_move",
+		"args": { "paths": [] }
+	},
+	{
+		"caption": "New…",
+		"command": "side_bar_new",
+		"args": { "paths": [] }
+	},
+	{
+		"caption": "Compare",
+		"command": "side_bar_compare",
+		"args": { "paths": [] }
+	}
+]
