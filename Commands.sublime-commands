@@ -17,7 +17,7 @@
 	{
 		"caption": "File: Copy Absolute Path",
 		"command": "side_bar_copy_absolute_path",
-		"args": { "paths": [] }
+		"args": { "paths": [], "trigger": "palette" }
 	},
 	{
 		"caption": "File: Duplicate…",
@@ -39,8 +39,8 @@
 		"command": "edit_settings",
 		"args":
 		{
-		    "base_file": "${packages}/SideBarTools/SideBarTools.sublime-settings",
-		    "default": "// SideBarTools Settings - User\n{\n\t$0\n}\n"
+			"base_file": "${packages}/SideBarTools/SideBarTools.sublime-settings",
+			"default": "// SideBarTools Settings - User\n{\n\t$0\n}\n"
 		}
 	}
 ]

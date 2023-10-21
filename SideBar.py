@@ -91,6 +91,13 @@ class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
 
 class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
+    def is_visible(self, paths=[], trigger=""):
+        # in 4158 ST gets the "copy path" sidebar context entry
+        # we want to keep our command palette entry though
+        if trigger != 'palette' and int(sublime.version()) >= 4158:
+            return False
+        return super().is_visible(paths)
+
     def run(self, paths=[]):
         paths = self.get_paths(paths)
         self.copy_to_clipboard_and_inform('\n'.join(paths))
