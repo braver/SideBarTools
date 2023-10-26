@@ -87,7 +87,7 @@ class MultipleFilesMixin(object):
 
 class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
 
-    def run(self, paths=[]):
+    def run(self, paths=[], context=""):
         names = (os.path.split(path)[1] for path in self.get_paths(paths))
         self.copy_to_clipboard_and_inform('\n'.join(names))
 
@@ -99,12 +99,12 @@ class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
     def is_visible(self, paths=[], context=""):
         # in 4158 ST gets the "copy path" sidebar context entry
-        # we want to keep our command palette entry though
-        if context != 'palette' and int(sublime.version()) >= 4158:
-            return False
-        return super().is_visible(paths, context)
+        # we want to keep our command palette and tab context entries though
+        if context in ['palette', 'tab']:
+            return super().is_visible(paths)
+        return int(sublime.version()) < 4158
 
-    def run(self, paths=[]):
+    def run(self, paths=[], context=""):
         paths = self.get_paths(paths)
         self.copy_to_clipboard_and_inform('\n'.join(paths))
 
@@ -114,7 +114,7 @@ class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
 class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
 
-    def run(self, paths=[]):
+    def run(self, paths=[], context=""):
         paths = self.get_paths(paths)
         root_paths = self.window.folders()
         relative_paths = []
@@ -140,7 +140,7 @@ class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
 
 class SideBarDuplicateCommand(SideBarCommand):
 
-    def run(self, paths):
+    def run(self, paths, context=""):
         source = self.get_path(paths)
         base, leaf = os.path.split(source)
 
@@ -197,7 +197,7 @@ class SideBarDuplicateCommand(SideBarCommand):
 
 class SideBarMoveCommand(SideBarCommand):
 
-    def run(self, paths):
+    def run(self, paths, context=""):
         source = self.get_path(paths)
 
         input_panel = self.window.show_input_panel(
@@ -293,7 +293,7 @@ class RemoveFolderListener(sublime_plugin.EventListener):
 class SideBarNewCommand(SideBarCommand):
     NEW_FILENAME = 'New file.txt'
 
-    def run(self, paths):
+    def run(self, paths, context=""):
         source = self.get_path(paths)
         select_extension = False
 
