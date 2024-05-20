@@ -297,6 +297,10 @@ class SideBarNewCommand(SideBarCommand):
         source = self.get_path(paths)
         select_extension = False
 
+        if not os.path.exists(source):
+            self.window.status_message('No path to create a new file from.')
+            return
+
         if os.path.isdir(source):
             source = os.path.join(source, self.NEW_FILENAME)
             select_extension = True
