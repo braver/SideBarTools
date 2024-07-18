@@ -93,9 +93,6 @@ class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
         names = (os.path.split(path)[1] for path in self.get_paths(paths))
         self.copy_to_clipboard_and_inform(names)
 
-    def description(self):
-        return 'Copy Filename'
-
 
 class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
@@ -111,9 +108,6 @@ class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
     def run(self, paths=[], context=""):
         paths = self.get_paths(paths)
         self.copy_to_clipboard_and_inform(paths)
-
-    def description(self):
-        return 'Copy Absolute Path'
 
 
 class SideBarDeleteCommand(MultipleFilesMixin, SideBarCommand):
@@ -168,9 +162,6 @@ class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
             posix_paths.append(PurePath(path).as_posix())
         self.copy_to_clipboard_and_inform(posix_paths)
 
-    def description(self):
-        return 'Copy Relative Path'
-
 
 class SideBarDuplicateCommand(SideBarCommand):
 
@@ -224,9 +215,6 @@ class SideBarDuplicateCommand(SideBarCommand):
                     error=error,
                 )
             )
-
-    def description(self):
-        return 'Duplicate File…'
 
 
 class SideBarMoveCommand(SideBarCommand):
@@ -307,9 +295,6 @@ class SideBarMoveCommand(SideBarCommand):
             )
         self.window.run_command('refresh_folder_list')
 
-    def description(self):
-        return 'Move File…'
-
 
 class RemoveFolderListener(sublime_plugin.EventListener):
 
@@ -384,9 +369,6 @@ class SideBarNewCommand(SideBarCommand):
 
         self.window.open_file(path)
 
-    def description(self):
-        return 'New…'
-
 
 class SideBarEditCommand(SideBarCommand):
 
@@ -396,6 +378,3 @@ class SideBarEditCommand(SideBarCommand):
     def run(self, paths):
         source = self.get_path(paths)
         self.window.open_file(source)
-
-    def description(self):
-        return 'Edit…'
