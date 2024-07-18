@@ -5,6 +5,7 @@ import os
 import threading
 import shutil
 from functools import partial
+from pathlib import PurePath
 
 
 def get_setting(window_command, setting):
@@ -32,11 +33,12 @@ class SideBarCommand(sublime_plugin.WindowCommand):
             return len(paths) < 2
         return bool(self.window.active_view().file_name())
 
-    def copy_to_clipboard_and_inform(self, data):
-        sublime.set_clipboard(data)
-        lines = len(data.split('\n'))
+    def copy_to_clipboard_and_inform(self, paths):
+        sublime.set_clipboard('\n'.join(paths))
+
+        lines = len(paths)
         self.window.status_message('Copied {} to clipboard'.format(
-            '{} lines'.format(lines) if lines > 1 else '"{}"'.format(data)
+            '{} lines'.format(lines) if lines > 1 else '"{}"'.format(paths[0])
         ))
 
     def get_path(self, paths):
@@ -89,7 +91,7 @@ class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
 
     def run(self, paths=[], context=""):
         names = (os.path.split(path)[1] for path in self.get_paths(paths))
-        self.copy_to_clipboard_and_inform('\n'.join(names))
+        self.copy_to_clipboard_and_inform(names)
 
     def description(self):
         return 'Copy Filename'
@@ -108,7 +110,7 @@ class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
     def run(self, paths=[], context=""):
         paths = self.get_paths(paths)
-        self.copy_to_clipboard_and_inform('\n'.join(paths))
+        self.copy_to_clipboard_and_inform(paths)
 
     def description(self):
         return 'Copy Absolute Path'
@@ -116,11 +118,17 @@ class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
 class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
 
-    def run(self, paths=[], context=""):
+    def is_visible(self, paths=[], context="", style=""):
+        if style == 'posix':
+            return sublime.platform() == 'windows' and get_setting(self, 'posix_copy_command')
+        return True
+
+    def run(self, paths=[], context="", style=""):
         paths = self.get_paths(paths)
         root_paths = self.window.folders()
         relative_paths = []
 
+        # find the correct relative paths
         for path in paths:
             if not root_paths:  # e.g. single file and using command palette
                 relative_paths.append(os.path.basename(path))
@@ -134,7 +142,15 @@ class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
         if not relative_paths:
             relative_paths.append(os.path.basename(path))
 
-        self.copy_to_clipboard_and_inform('\n'.join(relative_paths))
+        if style != 'posix':
+            self.copy_to_clipboard_and_inform(relative_paths)
+            return
+
+        # optional postprocess to posix paths
+        posix_paths = []
+        for path in relative_paths:
+            posix_paths.append(PurePath(path).as_posix())
+        self.copy_to_clipboard_and_inform(posix_paths)
 
     def description(self):
         return 'Copy Relative Path'

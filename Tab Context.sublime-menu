@@ -13,6 +13,11 @@
 		"args": { "paths": [], "context": "tab" }
 	},
 	{
+		"caption": "Copy Relative POSIX Path",
+		"command": "side_bar_copy_relative_path",
+		"args": { "paths": [], "context": "tab", "style": "posix" }
+	},
+	{
 		"caption": "Copy Absolute Path",
 		"command": "side_bar_copy_absolute_path",
 		"args": { "paths": [], "context": "tab" }

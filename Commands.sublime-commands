@@ -15,6 +15,11 @@
 		"args": { "paths": [] }
 	},
 	{
+		"caption": "File: Copy Relative POSIX Path",
+		"command": "side_bar_copy_relative_path",
+		"args": { "paths": [], "style": "posix" }
+	},
+	{
 		"caption": "File: Copy Absolute Path",
 		"command": "side_bar_copy_absolute_path",
 		"args": { "paths": [], "context": "palette" }

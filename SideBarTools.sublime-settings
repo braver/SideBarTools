@@ -11,5 +11,8 @@
 	"edit_command": false,
 
 	// Enable the Tab Context menu
-	"tab_context": true
+	"tab_context": true,
+
+	// Enable the option to copy POSIX-style relative paths
+	"posix_copy_command": false
 }

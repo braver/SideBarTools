@@ -16,9 +16,9 @@ All except Compare are also available via the command palette, in addition to:
 
 - Reveal In Sidebar
 
-To use the Compare command, configure a ["difftool"](https://github.com/braver/SideBarTools/blob/master/SideBarTools.sublime-settings#L8). For instance, [Xcode][4] comes with FileMerge that you can call via `opendiff`. The command will then become available when two files, or two folders are selected.
+To use the **Compare command**, configure a ["difftool"](https://github.com/braver/SideBarTools/blob/master/SideBarTools.sublime-settings#L8). For instance, [Xcode][4] comes with FileMerge that you can call via `opendiff`. The command will then become available when two files, or two folders are selected.
 
-An additional Edit command is available, for ease of use on touch screens (thanks @PetrKryslUCSD). Enable it via the [settings](https://github.com/braver/SideBarTools/blob/master/SideBarTools.sublime-settings#L11). 
+An additional **Edit command** is available, for ease of use on touch screens (thanks @PetrKryslUCSD). Enable it via the [settings](https://github.com/braver/SideBarTools/blob/master/SideBarTools.sublime-settings#L11). 
 
 To open a file in its default application, consider installing the [Open in Default Application][2] package.
 
@@ -33,6 +33,13 @@ and going overboard. This has benefits:
   new commands.
 - It's tiny, light-weight and reliable.
 - We won't [track][3] [you][5]. Ever.
+
+## Settings
+
+- `difftool`: configure what tool to use, and thereby enable the Compare command.
+- `edit_command`: enable the Edit command.
+- `tab_context`: optionally disable the context menu on file tabs.
+- `posix_copy_command`: enable the command to copy relative paths in POSIX format, e.g. for use in WSL (Windows only).
 
 
 ## Credits

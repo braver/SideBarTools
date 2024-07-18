@@ -18,6 +18,11 @@
 		"args": { "paths": [] }
 	},
 	{
+		"caption": "Copy Relative POSIX Path",
+		"command": "side_bar_copy_relative_path",
+		"args": { "paths": [], "style": "posix" }
+	},
+	{
 		"caption": "Copy Absolute Path",
 		"command": "side_bar_copy_absolute_path",
 		"args": { "paths": [] }
