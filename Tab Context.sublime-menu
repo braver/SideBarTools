@@ -23,6 +23,11 @@
 		"args": { "paths": [], "context": "tab" }
 	},
 	{
+		"caption": "Delete",
+		"command": "side_bar_delete",
+		"args": { "paths": [] }
+	},
+	{
 		"caption": "Duplicate…",
 		"command": "side_bar_duplicate",
 		"args": { "paths": [], "context": "tab" }

@@ -25,6 +25,11 @@
 		"args": { "paths": [], "context": "palette" }
 	},
 	{
+		"caption": "File: Delete",
+		"command": "side_bar_delete",
+		"args": { "paths": [] }
+	},
+	{
 		"caption": "File: Duplicate…",
 		"command": "side_bar_duplicate",
 		"args": { "paths": [] }

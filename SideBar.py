@@ -116,6 +116,22 @@ class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
         return 'Copy Absolute Path'
 
 
+class SideBarDeleteCommand(MultipleFilesMixin, SideBarCommand):
+
+    def is_visible(self, paths=[]):
+        paths = self.get_paths(paths)
+        if len(paths) < 1:
+            return False
+        for path in paths:
+            if not os.path.exists(path):
+                return False
+        return True
+
+    def run(self, paths=[]):
+        paths = self.get_paths(paths)
+        self.window.run_command('delete_file', {'files': paths, 'prompt': True})
+
+
 class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
 
     def is_visible(self, paths=[], context="", style=""):
