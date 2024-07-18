@@ -98,8 +98,10 @@ class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
 class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
     def is_visible(self, paths=[], context=""):
-        # in 4158 ST gets the "copy path" sidebar context entry
-        # we want to keep our command palette and tab context entries though
+        # in 4158 ST gets the "copy path" sidebar context entry for single files
+        # we also want to keep our command palette and tab context entries
+        if len(paths) > 1:
+            return True
         if context in ['palette', 'tab']:
             return super().is_visible(paths)
         return int(sublime.version()) < 4158
