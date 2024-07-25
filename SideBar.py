@@ -33,7 +33,7 @@ class SideBarCommand(sublime_plugin.WindowCommand):
             return len(paths) < 2
         return bool(self.window.active_view().file_name())
 
-    def copy_to_clipboard_and_inform(self, paths):
+    def copy_to_clipboard_and_inform(self, paths=[]):
         sublime.set_clipboard('\n'.join(paths))
 
         lines = len(paths)
@@ -90,7 +90,7 @@ class MultipleFilesMixin(object):
 class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
 
     def run(self, paths=[], context=""):
-        names = (os.path.split(path)[1] for path in self.get_paths(paths))
+        names = [os.path.split(path)[1] for path in self.get_paths(paths)]
         self.copy_to_clipboard_and_inform(names)
 
 
