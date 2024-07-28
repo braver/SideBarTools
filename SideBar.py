@@ -117,6 +117,8 @@ class SideBarDeleteCommand(MultipleFilesMixin, SideBarCommand):
         if len(paths) < 1:
             return False
         for path in paths:
+            if not path:
+                return False
             if not os.path.exists(path):
                 return False
         return True
