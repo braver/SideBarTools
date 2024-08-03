@@ -5,41 +5,41 @@
 	{
 		"caption": "Copy Filename",
 		"command": "side_bar_copy_name",
-		"args": { "paths": [], "context": "tab" }
+		"args": { "paths": [], "context": "tab", "group": -1, "index": -1 }
 	},
 	{
 		"caption": "Copy Relative Path",
 		"command": "side_bar_copy_relative_path",
-		"args": { "paths": [], "context": "tab" }
+		"args": { "paths": [], "context": "tab", "group": -1, "index": -1 }
 	},
 	{
 		"caption": "Copy Relative POSIX Path",
 		"command": "side_bar_copy_relative_path",
-		"args": { "paths": [], "context": "tab", "style": "posix" }
+		"args": { "paths": [], "context": "tab", "group": -1, "index": -1, "style": "posix" }
 	},
 	{
 		"caption": "Copy Absolute Path",
 		"command": "side_bar_copy_absolute_path",
-		"args": { "paths": [], "context": "tab" }
+		"args": { "paths": [], "context": "tab", "group": -1, "index": -1 }
 	},
 	{
 		"caption": "Delete",
 		"command": "side_bar_delete",
-		"args": { "paths": [], "context": "tab" }
+		"args": { "paths": [], "context": "tab", "group": -1, "index": -1 }
 	},
 	{
 		"caption": "Duplicate…",
 		"command": "side_bar_duplicate",
-		"args": { "paths": [], "context": "tab" }
+		"args": { "paths": [], "context": "tab", "group": -1, "index": -1 }
 	},
 	{
 		"caption": "Move…",
 		"command": "side_bar_move",
-		"args": { "paths": [], "context": "tab" }
+		"args": { "paths": [], "context": "tab", "group": -1, "index": -1 }
 	},
 	{
 		"caption": "New…",
 		"command": "side_bar_new",
-		"args": { "paths": [], "context": "tab" }
+		"args": { "paths": [], "context": "tab", "group": -1, "index": -1 }
 	}
 ]

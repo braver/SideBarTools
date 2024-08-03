@@ -26,12 +26,13 @@ def get_setting(window_command, setting):
 
 class SideBarCommand(sublime_plugin.WindowCommand):
 
-    def is_visible(self, paths=[], context=""):
+    def is_visible(self, paths=[], context="", group=-1, index=-1):
+        v = self.get_view(context, group, index)
         if context == 'tab' and not get_setting(self, 'tab_context'):
             return False
         if paths:
             return len(paths) < 2
-        return bool(self.window.active_view().file_name())
+        return bool(v.file_name())
 
     def copy_to_clipboard_and_inform(self, paths=[]):
         sublime.set_clipboard('\n'.join(paths))
@@ -41,11 +42,19 @@ class SideBarCommand(sublime_plugin.WindowCommand):
             '{} lines'.format(lines) if lines > 1 else '"{}"'.format(paths[0])
         ))
 
-    def get_path(self, paths):
+    def get_path(self, paths=[], context="", group=-1, index=-1):
         try:
             return paths[0]
         except IndexError:
-            return self.window.active_view().file_name()
+            v = self.get_view(context, group, index)
+            return v.file_name()
+
+    def get_view(self, context='', group=-1, index=-1):
+        w = self.window
+        if context == 'tab':
+            vig = w.views_in_group(group)
+            return vig[index]
+        return w.active_view()
 
     @staticmethod
     def make_dirs_for(filename):
@@ -60,63 +69,64 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 
 class MultipleFilesMixin(object):
 
-    def get_paths(self, paths):
-        return paths or [self.get_path(paths)]
+    def get_paths(self, paths, context='', **kwargs):
+        # paths is only filled on side bar context
+        # for command palette and tab context we need to find the path
+        return paths or [self.get_path(paths, context, **kwargs)]
 
-    def is_visible(self, paths=[]):
-        return bool(paths or self.window.active_view().file_name())
+    def is_visible(self, paths=[], context='', style='', **kwargs):
+        paths = self.get_paths(paths, context, **kwargs)
+
+        # in 4158 ST gets the "copy path" sidebar context entry for single files
+        # we also want to keep our command palette and tab context entries
+        if type(self) is SideBarCopyAbsolutePathCommand:
+            if len(paths) <= 1:
+                if context not in ['palette', 'tab']:
+                    if int(sublime.version()) >= 4158:
+                        return False
+
+        # posix style paths only on windows, and optional
+        if type(self) is SideBarCopyRelativePathCommand:
+            if style == 'posix':
+                if sublime.platform() != 'windows':
+                    return False
+                if not get_setting(self, 'posix_copy_command'):
+                    return False
+
+        # can only delete files that exist on disk
+        if type(self) is SideBarDeleteCommand:
+            for path in paths:
+                if not os.path.exists(path):
+                    return False
+
+        return bool(paths)
 
 
 class SideBarCopyNameCommand(MultipleFilesMixin, SideBarCommand):
 
-    def run(self, paths=[], context=""):
-        names = [os.path.split(path)[1] for path in self.get_paths(paths)]
+    def run(self, paths=[], **kwargs):
+        names = [os.path.split(path)[1] for path in self.get_paths(paths, **kwargs)]
         self.copy_to_clipboard_and_inform(names)
 
 
 class SideBarCopyAbsolutePathCommand(MultipleFilesMixin, SideBarCommand):
 
-    def is_visible(self, paths=[], context=""):
-        # in 4158 ST gets the "copy path" sidebar context entry for single files
-        # we also want to keep our command palette and tab context entries
-        if len(paths) > 1:
-            return True
-        if context in ['palette', 'tab']:
-            return super().is_visible(paths)
-        return int(sublime.version()) < 4158
-
-    def run(self, paths=[], context=""):
-        paths = self.get_paths(paths)
+    def run(self, paths=[], **kwargs):
+        paths = self.get_paths(paths, **kwargs)
         self.copy_to_clipboard_and_inform(paths)
 
 
 class SideBarDeleteCommand(MultipleFilesMixin, SideBarCommand):
 
-    def is_visible(self, paths=[], context=""):
-        paths = self.get_paths(paths)
-        if len(paths) < 1:
-            return False
-        for path in paths:
-            if not path:
-                return False
-            if not os.path.exists(path):
-                return False
-        return True
-
-    def run(self, paths=[], context=""):
-        paths = self.get_paths(paths)
+    def run(self, paths=[], **kwargs):
+        paths = self.get_paths(paths, **kwargs)
         self.window.run_command('delete_file', {'files': paths, 'prompt': True})
 
 
 class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
 
-    def is_visible(self, paths=[], context="", style=""):
-        if style == 'posix':
-            return sublime.platform() == 'windows' and get_setting(self, 'posix_copy_command')
-        return True
-
-    def run(self, paths=[], context="", style=""):
-        paths = self.get_paths(paths)
+    def run(self, paths=[], style="", **kwargs):
+        paths = self.get_paths(paths, **kwargs)
         root_paths = self.window.folders()
         relative_paths = []
 
@@ -147,8 +157,8 @@ class SideBarCopyRelativePathCommand(MultipleFilesMixin, SideBarCommand):
 
 class SideBarDuplicateCommand(SideBarCommand):
 
-    def run(self, paths, context=""):
-        source = self.get_path(paths)
+    def run(self, paths, **kwargs):
+        source = self.get_path(paths, **kwargs)
         base, leaf = os.path.split(source)
 
         name, ext = os.path.splitext(leaf)
@@ -159,7 +169,7 @@ class SideBarDuplicateCommand(SideBarCommand):
                 if _ext == '':
                     break
 
-        source = self.get_path(paths)
+        source = self.get_path(paths, **kwargs)
 
         input_panel = self.window.show_input_panel(
             'Duplicate As:', source, partial(self.on_done, source), None, None)
@@ -201,8 +211,8 @@ class SideBarDuplicateCommand(SideBarCommand):
 
 class SideBarMoveCommand(SideBarCommand):
 
-    def run(self, paths, context=""):
-        source = self.get_path(paths)
+    def run(self, **kwargs):
+        source = self.get_path(**kwargs)
 
         input_panel = self.window.show_input_panel(
             'Move to:', source, partial(self.on_done, source), None, None)
@@ -281,8 +291,8 @@ class SideBarMoveCommand(SideBarCommand):
 class SideBarNewCommand(SideBarCommand):
     NEW_FILENAME = 'New file.txt'
 
-    def run(self, paths, context=""):
-        source = self.get_path(paths)
+    def run(self, **kwargs):
+        source = self.get_path(**kwargs)
         select_extension = False
 
         if source is None or not os.path.exists(source):
@@ -341,11 +351,13 @@ class SideBarNewCommand(SideBarCommand):
 
 class SideBarEditCommand(SideBarCommand):
 
-    def is_visible(self, paths):
-        return get_setting(self, 'edit_command') or False
+    def is_visible(self, **kwargs):
+        if not get_setting(self, 'edit_command'):
+            return False
+        return super().is_visible(**kwargs)
 
-    def run(self, paths):
-        source = self.get_path(paths)
+    def run(self, **kwargs):
+        source = self.get_path(**kwargs)
         self.window.open_file(source)
 
 
