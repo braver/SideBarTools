@@ -60,10 +60,10 @@ class SideBarCommand(sublime_plugin.WindowCommand):
 
 class SideBarCompareCommand(sublime_plugin.WindowCommand):
 
-    def is_visible(self, paths, context=""):
+    def is_visible(self, paths):
         return len(paths) == 2 and bool(get_setting(self, 'difftool'))
 
-    def is_enabled(self, paths, context=""):
+    def is_enabled(self, paths):
         if len(paths) < 2 or not get_setting(self, 'difftool'):
             return False
         return os.path.isdir(paths[0]) == os.path.isdir(paths[1])

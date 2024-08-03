@@ -41,10 +41,5 @@
 		"caption": "New…",
 		"command": "side_bar_new",
 		"args": { "paths": [], "context": "tab" }
-	},
-	{
-		"caption": "Compare",
-		"command": "side_bar_compare",
-		"args": { "paths": [], "context": "tab" }
 	}
 ]
