@@ -58,26 +58,6 @@ class SideBarCommand(sublime_plugin.WindowCommand):
             return False
 
 
-class SideBarCompareCommand(sublime_plugin.WindowCommand):
-
-    def is_visible(self, paths):
-        return len(paths) == 2 and bool(get_setting(self, 'difftool'))
-
-    def is_enabled(self, paths):
-        if len(paths) < 2 or not get_setting(self, 'difftool'):
-            return False
-        return os.path.isdir(paths[0]) == os.path.isdir(paths[1])
-
-    def run(self, paths):
-        tool = get_setting(self, 'difftool')
-        if tool:
-            if isinstance(tool, str):
-                tool = [tool]
-            subprocess.Popen(tool + paths[:2])
-        else:
-            self.window.status_message("No diff tool configured")
-
-
 class MultipleFilesMixin(object):
 
     def get_paths(self, paths):
@@ -298,19 +278,6 @@ class SideBarMoveCommand(SideBarCommand):
         self.window.run_command('refresh_folder_list')
 
 
-class RemoveFolderListener(sublime_plugin.EventListener):
-
-    def on_post_window_command(self, window, command_name, args):
-        if command_name == 'delete_folder':
-            for folder in window.project_data()['folders']:
-                if not os.path.exists(os.path.expanduser(folder['path'])):
-                    window.run_command(
-                        'remove_folder',
-                        {
-                            'dirs': [folder['path']]
-                        })
-
-
 class SideBarNewCommand(SideBarCommand):
     NEW_FILENAME = 'New file.txt'
 
@@ -380,3 +347,36 @@ class SideBarEditCommand(SideBarCommand):
     def run(self, paths):
         source = self.get_path(paths)
         self.window.open_file(source)
+
+
+class SideBarCompareCommand(sublime_plugin.WindowCommand):
+
+    def is_visible(self, paths):
+        return len(paths) == 2 and bool(get_setting(self, 'difftool'))
+
+    def is_enabled(self, paths):
+        if len(paths) < 2 or not get_setting(self, 'difftool'):
+            return False
+        return os.path.isdir(paths[0]) == os.path.isdir(paths[1])
+
+    def run(self, paths):
+        tool = get_setting(self, 'difftool')
+        if tool:
+            if isinstance(tool, str):
+                tool = [tool]
+            subprocess.Popen(tool + paths[:2])
+        else:
+            self.window.status_message("No diff tool configured")
+
+
+class RemoveFolderListener(sublime_plugin.EventListener):
+
+    def on_post_window_command(self, window, command_name, args):
+        if command_name == 'delete_folder':
+            for folder in window.project_data()['folders']:
+                if not os.path.exists(os.path.expanduser(folder['path'])):
+                    window.run_command(
+                        'remove_folder',
+                        {
+                            'dirs': [folder['path']]
+                        })
