@@ -46,15 +46,18 @@ class SideBarCommand(sublime_plugin.WindowCommand):
         try:
             return paths[0]
         except IndexError:
-            v = self.get_view(context, group, index)
-            return v.file_name()
+            return self.file_via_window(context, group, index)
 
-    def get_view(self, context='', group=-1, index=-1):
+    def file_via_window(self, context='', group=-1, index=-1):
         w = self.window
         if context == 'tab':
-            vig = w.views_in_group(group)
-            return vig[index]
-        return w.active_view()
+            try:
+                vig = w.views_in_group(group)
+                return vig[index].file_name()
+            except IndexError:
+                sig = w.sheets_in_group(group)
+                return sig[index].file_name()
+        return w.active_view().file_name()
 
     def copy_to_clipboard_and_inform(self, paths=[]):
         sublime.set_clipboard('\n'.join(paths))
@@ -91,7 +94,7 @@ class SideBarCopyAbsolutePathCommand(SideBarCommand):
             if context not in ['palette', 'tab']:
                 if int(sublime.version()) >= 4158:
                     return False
-        return super().is_visible(paths=[], context='', **kwargs)
+        return super().is_visible(paths, context, **kwargs)
 
     def run(self, paths=[], **kwargs):
         paths = self.get_paths(paths, **kwargs)
@@ -107,7 +110,7 @@ class SideBarCopyRelativePathCommand(SideBarCommand):
                 return False
             if not get_setting(self, 'posix_copy_command'):
                 return False
-        return super().is_visible(paths=[], context='', **kwargs)
+        return super().is_visible(paths, **kwargs)
 
     def run(self, paths=[], style="", **kwargs):
         paths = self.get_paths(paths, **kwargs)
@@ -144,9 +147,11 @@ class SideBarDeleteCommand(SideBarCommand):
     def is_visible(self, paths=[], context='', **kwargs):
         # can only delete files that exist on disk
         for path in self.get_paths(paths, context, **kwargs):
+            if path is None:
+                return False
             if not os.path.exists(path):
                 return False
-        return super().is_visible(paths=[], context='', **kwargs)
+        return super().is_visible(paths, context, **kwargs)
 
     def run(self, paths=[], **kwargs):
         paths = self.get_paths(paths, **kwargs)
