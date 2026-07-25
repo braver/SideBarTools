@@ -44,11 +44,11 @@ and going overboard. This has benefits:
 
 ## Credits
 
-We used [SidebarEnhancements][1] as a starting point, but completely re-implemented everything we wanted to keep. Now it comes in at just over 200 lines of super clean Python with zero legacy. Special thanks go out to [@rwols][6] and [@mandx][7] to make this happen.
+We used [SidebarEnhancements][1] as a starting point, but completely re-implemented everything we wanted to keep. Now it comes in at just over 400 lines of super clean Python with zero legacy. Special thanks go out to [@rwols][6] and [@mandx][7] to make this happen.
 
 
-[1]: https://packagecontrol.io/packages/SideBarEnhancements
-[2]: https://packagecontrol.io/packages/Open%20in%20Default%20Application
+[1]: https://packages.sublimetext.com/packages/SideBarEnhancements
+[2]: https://packages.sublimetext.com/packages/Open%20in%20Default%20Application
 [3]: https://github.com/SideBarEnhancements-org/SideBarEnhancements/blob/d1c7fa4bac6a1f31ba177bc41ddd0ca902e43609/Stats.py
 [4]: https://developer.apple.com/xcode/
 [5]: https://forum.sublimetext.com/t/rfc-default-package-control-channel-and-package-telemetry/30157
