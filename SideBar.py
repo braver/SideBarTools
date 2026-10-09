@@ -260,16 +260,15 @@ class SideBarMoveCommand(SideBarCommand):
 
     @staticmethod
     def retarget_view(source, destination):
-        source = os.path.normcase(os.path.abspath(source))
-        destination = os.path.normcase(os.path.abspath(destination))
+        abs_source = os.path.abspath(source)
         for window in sublime.windows():
             for view in window.views():
                 filename = view.file_name()
                 if not filename:
                     continue
                 path = os.path.abspath(filename)
-                if os.path.normcase(path) == source:
-                    view.retarget(destination)
+                if os.path.normcase(path) == os.path.normcase(abs_source):
+                    view.retarget(os.path.abspath(destination))
 
     def move(self, source, destination):
         self.window.status_message(
